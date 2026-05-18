@@ -1,0 +1,4146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Economy Explorer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lexend+Deca:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ── Reset ──────────────────────────────────────────
+         Modern minimal reset. Layered above component rules
+         below; existing class-level styling overrides any
+         declaration here. Visual no-op against the current
+         tree because every <button>, <a>, <ul>, <input>, and
+         <svg> in the explorer already carries explicit
+         class-level styling. */
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
+      html {
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+      }
+
+      input,
+      button,
+      textarea,
+      select {
+        font: inherit;
+        color: inherit;
+      }
+
+      button {
+        background: none;
+        border: 0;
+        cursor: pointer;
+      }
+
+      ul,
+      ol {
+        list-style: none;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      :root {
+        --bg: #0b0c0f;
+        --surface: #111318;
+        --border: #1d1f28;
+        --border-strong: #272a38;
+        --text: #d0d4e0;
+        --text-muted: #52576a;
+        --text-dim: #2e3040;
+        --accent: #4a9ef8;
+
+        --capital: #e8a020;
+        --compute: #4a9ef8;
+        --chips: #9060f0;
+        --power: #20c47a;
+        --strategic: #d04860;
+
+        --node-lab: #d04860;
+        --node-cloud: #4a9ef8;
+        --node-neocloud: #2e7dc8;
+        --node-chip: #9060f0;
+        --node-memory: #b080ff;
+        --node-investor: #5090c0;
+
+        --header-h: 40px;
+        --sidebar-w: 172px;
+        --inspector-w: 340px;
+        --font-sans: "Lexend Deca", system-ui, -apple-system, "Segoe UI", sans-serif;
+        --font-mono:
+          "IBM Plex Mono", ui-monospace, "Cascadia Code", Consolas, monospace;
+        /* --font kept as a back-compat alias mapped to mono — most existing
+           rules use it for code-grid feel (sidebar, inspector, badges).
+           Body text uses --font-sans for the readable sans aesthetic. */
+        --font: var(--font-mono);
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--font-sans);
+        font-size: 11px;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* ── Color utilities ──────────────────────────────── */
+      .col-capital {
+        color: var(--capital);
+      }
+      .col-compute {
+        color: var(--compute);
+      }
+      .col-chips {
+        color: var(--chips);
+      }
+      .col-power {
+        color: var(--power);
+      }
+      .col-strategic {
+        color: var(--strategic);
+      }
+      .col-muted {
+        color: var(--text-muted);
+      }
+      .col-dim {
+        color: var(--text-muted);
+        font-size: 9px;
+      }
+
+      /* ── Badge variants ───────────────────────────────── */
+      .badge-capital {
+        color: var(--capital);
+        border-color: var(--capital);
+      }
+      .badge-compute {
+        color: var(--compute);
+        border-color: var(--compute);
+      }
+      .badge-chips {
+        color: var(--chips);
+        border-color: var(--chips);
+      }
+      .badge-power {
+        color: var(--power);
+        border-color: var(--power);
+      }
+      .badge-strategic {
+        color: var(--strategic);
+        border-color: var(--strategic);
+      }
+      .badge-lab {
+        color: var(--node-lab);
+        border-color: var(--node-lab);
+      }
+      .badge-entity {
+        color: var(--text-muted);
+        border-color: var(--text-muted);
+      }
+
+      /* Legend swatch colours are injected at runtime from `data.views`
+         (T-Box `aie:viewColor`). One source of truth; new views show up
+         in the legend the moment they're added to the ontology. */
+
+      /* ── Layout ───────────────────────────────────────── */
+      #app {
+        display: grid;
+        grid-template-rows: var(--header-h) 1fr;
+        grid-template-columns: var(--sidebar-w) 1fr var(--inspector-w);
+        width: 100vw;
+        height: 100vh;
+      }
+
+      /* ── Header ───────────────────────────────────────── */
+      #header {
+        grid-column: 1 / -1;
+        display: flex;
+        align-items: stretch;
+        border-bottom: 1px solid var(--border);
+        background: var(--surface);
+      }
+      .h-brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0 16px;
+        border-right: 1px solid var(--border);
+        color: var(--text-muted);
+        font-size: 10px;
+        letter-spacing: 0.14em;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+      .h-brand b {
+        color: var(--text);
+        font-weight: 600;
+        letter-spacing: 0.06em;
+      }
+
+      .h-search {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 0 14px;
+        border-right: 1px solid var(--border);
+      }
+      .h-search svg {
+        color: var(--text-muted);
+        flex-shrink: 0;
+      }
+      .h-search input {
+        background: none;
+        border: none;
+        outline: none;
+        color: var(--text);
+        font-family: var(--font);
+        font-size: 11px;
+        width: 100%;
+      }
+      .h-search input::placeholder {
+        color: var(--text-muted);
+      }
+
+      .h-stats {
+        display: flex;
+        align-items: stretch;
+      }
+      .h-stat {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 0 14px;
+        border-right: 1px solid var(--border);
+        font-size: 10px;
+        color: var(--text-muted);
+        letter-spacing: 0.04em;
+      }
+      .h-stat b {
+        color: var(--text);
+      }
+      .h-stat--live {
+        color: var(--power);
+      }
+
+      /* ── Sidebar ──────────────────────────────────────── */
+      #sidebar {
+        border-right: 1px solid var(--border);
+        background: var(--surface);
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+      .s-section {
+        padding: 12px 14px 6px;
+      }
+      .s-label {
+        font-size: 9px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        margin-bottom: 4px;
+      }
+      .s-rule {
+        height: 1px;
+        background: var(--border);
+        margin: 6px 0;
+      }
+
+      .view-list {
+        list-style: none;
+      }
+      .view-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 5px 14px;
+        cursor: pointer;
+        user-select: none;
+        color: var(--text-muted);
+        font-size: 11px;
+        letter-spacing: 0.02em;
+        transition:
+          background 0.1s,
+          color 0.1s;
+      }
+      .view-item:hover {
+        background: rgba(255, 255, 255, 0.03);
+        color: var(--text);
+      }
+      .view-item.active {
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--text);
+      }
+      .v-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--text-dim);
+        flex-shrink: 0;
+        transition: background 0.15s;
+      }
+      .view-item[data-view="all"].active .v-dot,
+      .view-item[data-view="all"]:hover .v-dot {
+        background: var(--text);
+      }
+      .view-item.active .v-dot,
+      .view-item:hover .v-dot {
+        background: var(--view-color, var(--text));
+      }
+
+      .filter-block {
+        padding: 0 14px 6px;
+      }
+      .f-sublabel {
+        font-size: 9px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--text-dim);
+        margin-bottom: 4px;
+      }
+      .f-item {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        padding: 3px 0;
+        cursor: pointer;
+        color: var(--text-muted);
+        font-size: 10px;
+      }
+      .f-item input[type="checkbox"] {
+        appearance: none;
+        width: 10px;
+        height: 10px;
+        border: 1px solid var(--border-strong);
+        background: transparent;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+      }
+      .f-item input[type="checkbox"]:checked {
+        background: var(--accent);
+        border-color: var(--accent);
+      }
+      .f-item input[type="checkbox"]:checked::after {
+        content: "";
+        position: absolute;
+        top: 1px;
+        left: 2px;
+        width: 4px;
+        height: 2px;
+        border-left: 1.5px solid #000;
+        border-bottom: 1.5px solid #000;
+        transform: rotate(-45deg);
+      }
+
+      .legend {
+        padding: 0 14px 12px;
+      }
+      .l-item {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 2px 0;
+        font-size: 9px;
+        color: var(--text-muted);
+        letter-spacing: 0.06em;
+      }
+      .l-line {
+        width: 16px;
+        height: 1.5px;
+        flex-shrink: 0;
+      }
+
+      /* ── Graph Canvas ─────────────────────────────────── */
+      #canvas {
+        position: relative;
+        overflow: hidden;
+        background: var(--bg);
+        cursor: default;
+      }
+      #canvas::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background-image:
+          linear-gradient(var(--border) 1px, transparent 1px),
+          linear-gradient(90deg, var(--border) 1px, transparent 1px);
+        background-size: 48px 48px;
+        opacity: 0.3;
+      }
+      #graph {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+      #graph canvas {
+        outline: none;
+      }
+      #graph.is-grabbing {
+        cursor: grabbing;
+      }
+      #graph.is-grab {
+        cursor: grab;
+      }
+      .i-empty.off {
+        display: none;
+      }
+      .balance-bar {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        letter-spacing: 0;
+        white-space: nowrap;
+      }
+      .i-sec-label.spaced {
+        margin-top: 14px;
+      }
+      .edge-row {
+        cursor: pointer;
+        margin: 0 -8px;
+        padding: 3px 8px;
+        border-radius: 2px;
+        transition: background 0.1s;
+      }
+      .actor-link {
+        cursor: pointer;
+        text-decoration: underline dotted;
+        text-underline-offset: 2px;
+        text-decoration-color: var(--text-muted);
+      }
+      .actor-link:hover {
+        text-decoration-color: var(--text);
+        color: var(--text);
+      }
+      .edge-row:hover {
+        background: var(--bg-hover, rgba(255, 255, 255, 0.04));
+      }
+      .edge-row .edge-cp {
+        font-weight: 500;
+        color: var(--text);
+      }
+      .edge-row .edge-arrow {
+        color: var(--text-muted);
+        margin-right: 4px;
+      }
+      .edge-row .edge-type {
+        font-size: 9px;
+        letter-spacing: 0.04em;
+      }
+      .edge-row .edge-amt {
+        font-family: var(--font-mono);
+        font-size: 9px;
+        color: var(--text-muted);
+      }
+      .layout-btn {
+        width: 100%;
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-dim);
+        font-family: inherit;
+        font-size: 9px;
+        letter-spacing: 0.08em;
+        padding: 6px 8px;
+        cursor: pointer;
+        transition:
+          color 0.15s,
+          border-color 0.15s;
+      }
+      .layout-btn:hover {
+        color: var(--text);
+        border-color: var(--text-dim);
+      }
+
+      .edge-group {
+        cursor: pointer;
+      }
+      .edge-line {
+        transition:
+          stroke-width 0.12s,
+          opacity 0.12s;
+      }
+      .edge-hit {
+        stroke: transparent;
+        stroke-width: 14;
+        fill: none;
+        cursor: pointer;
+      }
+      .edge-label {
+        font-family: var(--font);
+        font-size: 8.5px;
+        fill: var(--text-muted);
+        pointer-events: none;
+        user-select: none;
+      }
+
+      .node-group {
+        cursor: pointer;
+      }
+      .node-ring {
+        transition: opacity 0.12s;
+      }
+      .node-body {
+        transition: fill-opacity 0.12s;
+      }
+      .node-name {
+        font-family: var(--font);
+        font-size: 10px;
+        fill: var(--text);
+        pointer-events: none;
+        user-select: none;
+      }
+      .node-type {
+        font-family: var(--font);
+        font-size: 8px;
+        fill: var(--text-muted);
+        pointer-events: none;
+        user-select: none;
+      }
+
+      /* ── Inspector ────────────────────────────────────── */
+      #inspector {
+        border-left: 1px solid var(--border);
+        background: var(--surface);
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+
+      .i-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        gap: 9px;
+        color: var(--text-dim);
+        font-size: 10px;
+        letter-spacing: 0.08em;
+        text-align: center;
+        padding: 32px;
+      }
+      .i-empty svg {
+        opacity: 0.25;
+        margin-bottom: 4px;
+      }
+
+      .i-panel {
+        display: none;
+      }
+      .i-panel.on {
+        display: block;
+      }
+
+      .i-head {
+        padding: 12px 14px 10px;
+        border-bottom: 1px solid var(--border);
+      }
+      .i-badge {
+        display: inline-block;
+        font-size: 9px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        padding: 1px 6px;
+        border: 1px solid;
+        margin-bottom: 6px;
+      }
+      .i-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text);
+        line-height: 1.3;
+      }
+      .i-subtitle {
+        font-size: 9px;
+        color: var(--text-muted);
+        margin-top: 3px;
+      }
+
+      .i-sec {
+        padding: 9px 14px;
+        border-bottom: 1px solid var(--border);
+      }
+      .i-sec-label {
+        font-size: 9px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        margin-bottom: 7px;
+      }
+      .i-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        padding: 2px 0;
+        font-size: 10px;
+        gap: 10px;
+      }
+      .i-key {
+        color: var(--text-muted);
+        flex-shrink: 0;
+      }
+      .i-val {
+        color: var(--text);
+        font-weight: 500;
+        text-align: right;
+        word-break: break-all;
+      }
+      .i-val.money {
+        color: var(--capital);
+      }
+      .i-val.compute {
+        color: var(--compute);
+      }
+      .i-val.chips {
+        color: var(--chips);
+      }
+      .i-val.power {
+        color: var(--power);
+      }
+      .i-val.strategic {
+        color: var(--strategic);
+      }
+      .i-val.dim {
+        color: var(--text-muted);
+        font-size: 9px;
+      }
+
+      .party {
+        margin-bottom: 7px;
+      }
+      .party-name {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--text);
+        margin-bottom: 2px;
+      }
+      .party-role {
+        font-size: 9px;
+        color: var(--text-muted);
+        padding: 1px 0 1px 10px;
+      }
+
+      .conf-row {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .c-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+      }
+      .c-dot.on {
+        background: var(--power);
+      }
+      .c-dot.off {
+        background: var(--border-strong);
+      }
+
+      .res-tag {
+        display: inline-block;
+        font-size: 9px;
+        color: var(--text-muted);
+        border: 1px solid var(--border-strong);
+        padding: 1px 5px;
+        margin: 2px 2px 2px 0;
+      }
+
+      .status-pill {
+        font-size: 9px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        padding: 1px 6px;
+        border: 1px solid;
+      }
+      .s-active {
+        color: var(--power);
+        border-color: var(--power);
+      }
+      .s-reported {
+        color: var(--capital);
+        border-color: var(--capital);
+      }
+      .s-rumored {
+        color: var(--text-muted);
+        border-color: var(--text-muted);
+      }
+
+      .ev-item {
+        padding: 6px 0;
+        border-bottom: 1px solid var(--border);
+      }
+      .ev-item:last-child {
+        border-bottom: none;
+      }
+      .ev-type {
+        font-size: 9px;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin-bottom: 2px;
+      }
+      .ev-date {
+        font-size: 10px;
+        color: var(--text);
+        margin-bottom: 3px;
+      }
+      .ev-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 9px;
+        color: var(--accent);
+        text-decoration: none;
+      }
+      .ev-link:hover {
+        text-decoration: underline;
+      }
+
+      .i-empty-note {
+        font-size: 10px;
+        color: var(--text-dim);
+        text-align: center;
+        padding: 18px 14px;
+      }
+
+      ::-webkit-scrollbar {
+        width: 3px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--border-strong);
+      }
+
+      /* ── Actor inspector (financial-analyst lens) ─────────
+         Rendered into #dyn-body when inspecting an actor node.
+         The static .i-head is hidden via .i-actor-mode so the
+         actor view can supply its own identity block.
+
+         Section order = inverted pyramid:
+           1. identity   2. headline   3. flows
+           4. counterparties  5. data quality  6. FAQ
+      */
+      :root {
+        --act-accent: #c4b5fd;
+        --act-accent-soft: rgba(196, 181, 253, 0.12);
+        --act-bull: #5dd6a3;
+        --act-flag: #f0c674;
+        --act-bear: #ef6477;
+        --act-bear-soft: rgba(239, 100, 119, 0.1);
+        --act-reg: #5dd6a3;
+        --act-comp: #8eb6ff;
+        --act-journ: #f0c674;
+        --act-anal: #c084fc;
+        /* ADR 010 § EVT-001 — four siblings replacing AnalysisTier. */
+        --act-industry: #67d6ce;
+        --act-sell: #ff9a73;
+        --act-buy: #d486ff;
+        --act-opinion: #6b7785;
+      }
+      #i-dynamic.i-actor-mode .i-head {
+        display: none;
+      }
+      #i-dynamic.i-actor-mode #dyn-body {
+        padding: 0;
+        border-bottom: none;
+      }
+
+      .act-block {
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--border);
+      }
+      .act-block:last-child {
+        border-bottom: none;
+      }
+      .act-block-h {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        font-size: 9px;
+        font-weight: 500;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        margin: 0 0 9px;
+      }
+      .act-block-h-c {
+        font-family: var(--font-mono);
+        font-weight: 400;
+        color: var(--text-muted);
+      }
+
+      /* 1 · Identity */
+      .act-id {
+        padding: 14px 16px;
+        background: linear-gradient(
+          180deg,
+          rgba(196, 181, 253, 0.06),
+          transparent 80%
+        );
+        border-bottom: 1px solid var(--border);
+      }
+      .act-id-types {
+        display: flex;
+        gap: 4px;
+        flex-wrap: wrap;
+        margin-bottom: 6px;
+      }
+      .act-chip {
+        font-family: var(--font-mono);
+        font-size: 9px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        background: var(--act-accent-soft);
+        color: var(--act-accent);
+        padding: 2px 6px;
+        border-radius: 2px;
+      }
+      .act-chip.frontier {
+        background: rgba(240, 198, 116, 0.16);
+        color: var(--act-flag);
+      }
+      .act-id-name {
+        font-family: var(--font-sans);
+        font-size: 26px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        color: var(--text);
+        line-height: 1.05;
+        margin: 0;
+      }
+      .act-id-meta {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        color: var(--text-muted);
+        margin: 5px 0 11px;
+      }
+      .act-id-meta span:not(:last-child)::after {
+        content: " · ";
+      }
+      .act-id-meta a {
+        color: var(--text-muted);
+        text-decoration: none;
+      }
+      .act-id-meta a:hover {
+        color: var(--accent);
+      }
+      .act-id-kpis {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        margin: 0;
+      }
+      .act-id-kpis div {
+        margin: 0;
+      }
+      .act-id-kpis dt {
+        font-size: 9px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+      }
+      .act-id-kpis dd {
+        margin: 2px 0 0;
+        font-family: var(--font-mono);
+        font-size: 12px;
+        color: var(--text);
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .act-conf-dot {
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--text-muted);
+      }
+      .act-conf-dot.high {
+        background: var(--act-bull);
+      }
+      .act-conf-dot.medium {
+        background: var(--act-flag);
+      }
+      .act-conf-dot.reported {
+        background: var(--act-bear);
+      }
+
+      /* 2 · Headline */
+      .act-headline {
+        font-family: var(--font-sans);
+        font-size: 12.5px;
+        line-height: 1.5;
+        color: var(--text);
+        margin: 0 0 10px;
+      }
+      .act-headline strong {
+        font-weight: 600;
+      }
+      .act-headline em {
+        font-style: normal;
+        color: var(--act-accent);
+      }
+      .act-kpi-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1px;
+        background: var(--border);
+        border: 1px solid var(--border);
+        border-radius: 3px;
+        overflow: hidden;
+      }
+      .act-kpi {
+        background: var(--surface);
+        padding: 8px 10px;
+        margin: 0;
+      }
+      .act-kpi dt {
+        font-size: 9px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+      }
+      .act-kpi dd {
+        margin: 2px 0 0;
+        font-family: var(--font-mono);
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--text);
+      }
+      .act-kpi dd.bear {
+        color: var(--act-bear);
+      }
+      .act-kpi dd.bull {
+        color: var(--act-bull);
+      }
+
+      /* 3 · Flows */
+      .act-flow {
+        display: grid;
+        gap: 5px;
+      }
+      .act-flow-row {
+        display: grid;
+        grid-template-columns: 30px 1fr 70px;
+        align-items: center;
+        gap: 8px;
+        font-family: var(--font-mono);
+        font-size: 10.5px;
+      }
+      .act-flow-lbl {
+        color: var(--text-muted);
+        font-size: 9px;
+        letter-spacing: 0.1em;
+      }
+      .act-flow-track {
+        display: block;
+        height: 9px;
+        background: rgba(255, 255, 255, 0.04);
+        border-radius: 2px;
+        overflow: hidden;
+      }
+      .act-flow-fill {
+        display: block;
+        height: 100%;
+        border-radius: 2px;
+      }
+      .act-flow-fill.in {
+        background: var(--text-muted);
+      }
+      .act-flow-fill.out {
+        background: var(--act-bear);
+      }
+      .act-flow-amt {
+        text-align: right;
+        color: var(--text);
+      }
+      .act-flow-amt.dim {
+        color: var(--text-muted);
+      }
+      .act-flow-net {
+        font-family: var(--font-mono);
+        font-size: 10.5px;
+        color: var(--text-muted);
+        text-align: right;
+        margin: 7px 0 0;
+      }
+      .act-flow-net strong.bear {
+        color: var(--act-bear);
+        font-weight: 500;
+      }
+      .act-flow-net strong.bull {
+        color: var(--act-bull);
+        font-weight: 500;
+      }
+
+      /* 4 · Counterparties */
+      .act-cp-group + .act-cp-group {
+        margin-top: 14px;
+      }
+      .act-cp-summary {
+        margin: 0;
+        font-size: 12px;
+        line-height: 1.5;
+        color: var(--text-muted);
+      }
+      .act-cp-summary strong {
+        color: var(--text);
+        font-weight: 500;
+      }
+      .act-cp-grouph {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        font-size: 9.5px;
+        font-weight: 500;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--act-accent);
+        margin: 0 0 6px;
+        padding-bottom: 4px;
+        border-bottom: 1px dashed var(--border);
+      }
+      .act-cp-grouph-c {
+        font-family: var(--font-mono);
+        font-weight: 400;
+        letter-spacing: 0.04em;
+        text-transform: none;
+        color: var(--text-muted);
+        font-size: 10px;
+      }
+      .act-cp-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      .act-cp {
+        padding: 8px 0;
+        border-bottom: 1px solid var(--border);
+        cursor: pointer;
+        margin: 0 -6px;
+        padding-left: 6px;
+        padding-right: 6px;
+        border-radius: 3px;
+        transition: background 0.12s;
+      }
+      .act-cp:last-child {
+        border-bottom: none;
+      }
+      .act-cp:hover {
+        background: rgba(196, 181, 253, 0.04);
+      }
+      .act-cp-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 6px;
+      }
+      .act-cp-name {
+        font-family: var(--font-sans);
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--act-accent);
+      }
+      /* Arrow direction is the primary scan signal in the counterparty
+         list — it tells the analyst "did money flow in or out?" before
+         the amount column even loads. Render it as full-strength accent
+         (not muted chrome) so it reads at row scale. */
+      .act-cp-arrow {
+        color: var(--act-accent);
+        font-family: var(--font-mono);
+        font-weight: 600;
+        margin-right: 6px;
+        opacity: 0.85;
+      }
+      .act-cp-amt {
+        font-family: var(--font-mono);
+        font-size: 12px;
+        color: var(--text);
+      }
+      .act-cp-amt.dim {
+        color: var(--text-muted);
+        font-style: italic;
+      }
+      .act-cp-meta {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 4px;
+        margin-top: 3px;
+        font-family: var(--font-mono);
+        font-size: 9px;
+        color: var(--text-muted);
+      }
+      .act-cp-type {
+        color: var(--text);
+        opacity: 0.7;
+      }
+      .act-cp-pill {
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        padding: 1px 5px;
+        border-radius: 2px;
+        font-size: 8.5px;
+      }
+      .act-cp-pill.s-active {
+        background: rgba(93, 214, 163, 0.14);
+        color: var(--act-bull);
+        border: none;
+      }
+      .act-cp-pill.s-announced {
+        background: rgba(240, 198, 116, 0.14);
+        color: var(--act-flag);
+        border: none;
+      }
+      .act-cp-pill.s-completed {
+        background: rgba(142, 182, 255, 0.14);
+        color: var(--act-comp);
+        border: none;
+      }
+      .act-cp-pill.s-signed {
+        background: rgba(196, 181, 253, 0.14);
+        color: var(--act-accent);
+        border: none;
+      }
+      .act-cp-pill.s-terminated {
+        background: rgba(239, 100, 119, 0.14);
+        color: var(--act-bear);
+        border: none;
+      }
+      .act-cp-pill.t-reg {
+        background: rgba(93, 214, 163, 0.14);
+        color: var(--act-reg);
+      }
+      .act-cp-pill.t-comp {
+        background: rgba(142, 182, 255, 0.14);
+        color: var(--act-comp);
+      }
+      .act-cp-pill.t-journ {
+        background: rgba(240, 198, 116, 0.14);
+        color: var(--act-journ);
+      }
+      .act-cp-pill.t-anal {
+        background: rgba(192, 132, 252, 0.14);
+        color: var(--act-anal);
+      }
+      .act-cp-pill.t-industry {
+        background: rgba(103, 214, 206, 0.14);
+        color: var(--act-industry);
+      }
+      .act-cp-pill.t-sell {
+        background: rgba(255, 154, 115, 0.14);
+        color: var(--act-sell);
+      }
+      .act-cp-pill.t-buy {
+        background: rgba(212, 134, 255, 0.14);
+        color: var(--act-buy);
+      }
+      .act-cp-pill.t-opinion {
+        background: rgba(107, 119, 133, 0.14);
+        color: var(--act-opinion);
+      }
+      .act-cp-pill.t-none {
+        background: rgba(239, 100, 119, 0.14);
+        color: var(--act-bear);
+      }
+      .act-cp-date {
+        margin-left: auto;
+        font-size: 9px;
+      }
+      .act-cp-flag {
+        margin-top: 5px;
+        font-family: var(--font-sans);
+        font-size: 11px;
+        line-height: 1.4;
+        color: var(--act-bear);
+        background: var(--act-bear-soft);
+        padding: 5px 7px;
+        border-radius: 3px;
+        border-left: 2px solid var(--act-bear);
+      }
+
+      /* 5 · Data quality */
+      .act-dq-bar {
+        display: flex;
+        height: 14px;
+        border-radius: 2px;
+        overflow: hidden;
+        font-family: var(--font-mono);
+        font-size: 8.5px;
+        letter-spacing: 0.06em;
+        margin-bottom: 7px;
+        background: rgba(255, 255, 255, 0.04);
+      }
+      .act-dq-seg {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #0b0d10;
+        font-weight: 600;
+      }
+      .act-dq-seg.reg {
+        background: var(--act-reg);
+      }
+      .act-dq-seg.comp {
+        background: var(--act-comp);
+      }
+      .act-dq-seg.journ {
+        background: var(--act-journ);
+      }
+      .act-dq-seg.anal {
+        background: var(--act-anal);
+      }
+      .act-dq-seg.industry {
+        background: var(--act-industry);
+      }
+      .act-dq-seg.sell {
+        background: var(--act-sell);
+      }
+      .act-dq-seg.buy {
+        background: var(--act-buy);
+      }
+      .act-dq-seg.opinion {
+        background: var(--act-opinion);
+      }
+      .act-dq-note {
+        font-family: var(--font-sans);
+        font-size: 11px;
+        color: var(--text-muted);
+        margin: 0 0 6px;
+        line-height: 1.45;
+      }
+      .act-dq-note strong {
+        font-family: var(--font-mono);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .act-dq-flag {
+        margin: 0;
+        font-family: var(--font-sans);
+        font-size: 11px;
+        line-height: 1.4;
+        color: var(--act-flag);
+        padding: 5px 7px;
+        background: rgba(240, 198, 116, 0.08);
+        border-left: 2px solid var(--act-flag);
+        border-radius: 0 3px 3px 0;
+      }
+
+      /* 6 · FAQ */
+      .act-faq details {
+        border-bottom: 1px solid var(--border);
+        padding: 2px 0;
+      }
+      .act-faq details:last-of-type {
+        border-bottom: none;
+      }
+      .act-faq summary {
+        cursor: pointer;
+        list-style: none;
+        font-family: var(--font-sans);
+        font-size: 12px;
+        color: var(--text);
+        padding: 7px 0 7px 20px;
+        position: relative;
+        line-height: 1.4;
+        transition: color 0.12s;
+      }
+      .act-faq summary::-webkit-details-marker {
+        display: none;
+      }
+      .act-faq summary::before {
+        content: "+";
+        position: absolute;
+        left: 0;
+        top: 6px;
+        width: 14px;
+        text-align: center;
+        font-family: var(--font-mono);
+        font-size: 13px;
+        color: var(--act-accent);
+      }
+      .act-faq details[open] summary::before {
+        content: "−";
+      }
+      .act-faq summary:hover {
+        color: var(--act-accent);
+      }
+      .act-faq details p {
+        margin: 0 0 9px 20px;
+        font-family: var(--font-sans);
+        font-size: 11.5px;
+        line-height: 1.55;
+        color: var(--text-muted);
+      }
+      .act-faq details p strong {
+        color: var(--text);
+        font-weight: 500;
+      }
+      .act-faq-cite {
+        display: inline-block;
+        margin-left: 5px;
+        font-family: var(--font-mono);
+        font-size: 9px;
+        letter-spacing: 0.06em;
+        color: var(--act-accent);
+        background: var(--act-accent-soft);
+        padding: 1px 5px;
+        border-radius: 2px;
+        vertical-align: 1px;
+      }
+      .act-faq-empty {
+        font-style: italic;
+        color: var(--text-muted);
+      }
+
+      /* width utility table — bar widths are runtime numbers; HTML attribute
+         setting via CSS class avoids per-element CSS attributes. Snap each
+         width to the nearest 5%, so 21 classes cover every bar exactly. */
+      .act-w-0 {
+        width: 0%;
+      }
+      .act-w-5 {
+        width: 5%;
+      }
+      .act-w-10 {
+        width: 10%;
+      }
+      .act-w-15 {
+        width: 15%;
+      }
+      .act-w-20 {
+        width: 20%;
+      }
+      .act-w-25 {
+        width: 25%;
+      }
+      .act-w-30 {
+        width: 30%;
+      }
+      .act-w-35 {
+        width: 35%;
+      }
+      .act-w-40 {
+        width: 40%;
+      }
+      .act-w-45 {
+        width: 45%;
+      }
+      .act-w-50 {
+        width: 50%;
+      }
+      .act-w-55 {
+        width: 55%;
+      }
+      .act-w-60 {
+        width: 60%;
+      }
+      .act-w-65 {
+        width: 65%;
+      }
+      .act-w-70 {
+        width: 70%;
+      }
+      .act-w-75 {
+        width: 75%;
+      }
+      .act-w-80 {
+        width: 80%;
+      }
+      .act-w-85 {
+        width: 85%;
+      }
+      .act-w-90 {
+        width: 90%;
+      }
+      .act-w-95 {
+        width: 95%;
+      }
+      .act-w-100 {
+        width: 100%;
+      }
+
+      /* ─────────────────────────────────────────────────────────
+         Edge inspector (analyst lens — inverted-pyramid)
+         Mirrors .i-actor-mode scoping. .act-block / .act-faq /
+         status-pill / tier classes are reused; only edge-specific
+         atoms (identity strip, party row, capital-flow viz) get
+         their own .edg-* prefix.
+         Section order:
+           1. identity   2. headline   3. capital flow
+           4. parties    5. resources  6. data quality   7. FAQ
+         ───────────────────────────────────────────────────────── */
+      #i-dynamic.i-edge-mode .i-head {
+        display: none;
+      }
+      #i-dynamic.i-edge-mode #dyn-body {
+        padding: 0;
+        border-bottom: none;
+      }
+
+      /* 1 · Identity */
+      .edg-id {
+        padding: 14px 16px;
+        background: linear-gradient(
+          180deg,
+          rgba(196, 181, 253, 0.06),
+          transparent 80%
+        );
+        border-bottom: 1px solid var(--border);
+      }
+      .edg-id-tags {
+        display: flex;
+        gap: 5px;
+        flex-wrap: wrap;
+        margin-bottom: 8px;
+      }
+      .edg-pill {
+        font-family: var(--font-mono);
+        font-size: 9px;
+        font-weight: 500;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        padding: 2px 6px;
+        border-radius: 2px;
+        border: 1px solid var(--border);
+        color: var(--text-muted);
+        background: var(--surface);
+      }
+      .edg-pill.type {
+        color: var(--act-accent);
+        background: var(--act-accent-soft);
+        border-color: rgba(196, 181, 253, 0.18);
+      }
+      .edg-id-title {
+        margin: 0 0 6px;
+        font-family: var(--font-sans);
+        font-weight: 600;
+        font-size: 16px;
+        line-height: 1.25;
+        letter-spacing: -0.005em;
+        color: var(--text);
+        word-break: break-word;
+      }
+      .edg-arrow {
+        color: var(--act-accent);
+        font-weight: 600;
+        margin: 0 6px;
+      }
+      .edg-id-meta {
+        margin: 0;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        font-family: var(--font-mono);
+        font-size: 10px;
+        color: var(--text-muted);
+      }
+
+      /* 2 · Headline (multi-commitment list) */
+      .edg-cmt-list {
+        margin: 8px 0 0;
+        padding: 0;
+        list-style: none;
+        display: grid;
+        gap: 4px;
+      }
+      .edg-cmt {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 8px;
+        padding: 6px 8px;
+        background: var(--surface);
+        border-radius: 3px;
+        font-family: var(--font-mono);
+        font-size: 11.5px;
+      }
+      .edg-cmt-lbl {
+        color: var(--text-muted);
+        font-size: 10px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+      .edg-cmt-amt {
+        color: var(--text);
+        font-weight: 500;
+      }
+      .edg-cmt-amt.dim {
+        color: var(--text-muted);
+      }
+
+      /* 3 · Capital flow */
+      .edg-flow {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        gap: 8px;
+        align-items: center;
+        background: var(--surface);
+        padding: 9px 10px;
+        border-radius: 3px;
+      }
+      .edg-flow-actor {
+        font-family: var(--font-sans);
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--text);
+      }
+      .edg-flow-actor.payer {
+        text-align: left;
+      }
+      .edg-flow-actor.recv {
+        text-align: right;
+      }
+      .edg-flow-amt {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        color: var(--act-accent);
+        font-weight: 500;
+        text-align: center;
+        white-space: nowrap;
+      }
+      .edg-flow-amt::before {
+        content: "→ ";
+        color: var(--act-accent);
+      }
+      .edg-flow-amt::after {
+        content: " →";
+        color: var(--act-accent);
+      }
+      .edg-flow-note {
+        margin: 6px 0 0;
+        font-family: var(--font-sans);
+        font-size: 11px;
+        color: var(--text-muted);
+        line-height: 1.5;
+      }
+
+      /* 4 · Parties */
+      .edg-party-list {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        display: grid;
+        gap: 5px;
+      }
+      .edg-party {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 8px;
+        align-items: baseline;
+        padding: 7px 9px;
+        background: var(--surface);
+        border-radius: 3px;
+      }
+      .edg-party-name {
+        font-family: var(--font-sans);
+        font-size: 12.5px;
+        color: var(--text);
+        font-weight: 500;
+        cursor: pointer;
+        text-decoration: none;
+      }
+      .edg-party-name:hover {
+        color: var(--act-accent);
+      }
+      .edg-party-roles {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        color: var(--text-muted);
+        text-align: right;
+      }
+
+      /* 5 · Resources */
+      .edg-res-list {
+        display: flex;
+        gap: 4px;
+        flex-wrap: wrap;
+      }
+      .edg-res {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        letter-spacing: 0.04em;
+        padding: 2px 6px;
+        border-radius: 2px;
+        background: var(--surface);
+        color: var(--text);
+        border: 1px solid var(--border);
+      }
+
+      /* ─────────────────────────────────────────────────────────
+         Cite list — shared between edge & actor inspectors.
+         Each row: tier badge + title (linked) + date.
+         Placeholder rows get the .placeholder modifier — visible
+         dim-amber tag, no link styling on the title.
+         ───────────────────────────────────────────────────────── */
+      .cite-list {
+        margin: 8px 0 0;
+        padding: 0;
+        list-style: none;
+        display: grid;
+        gap: 5px;
+      }
+      .cite {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 8px;
+        align-items: baseline;
+        padding: 5px 7px;
+        background: var(--surface);
+        border-radius: 3px;
+        font-size: 11.5px;
+        line-height: 1.4;
+      }
+      .cite-tier {
+        font-family: var(--font-mono);
+        font-size: 9px;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        padding: 2px 5px;
+        border-radius: 2px;
+        color: var(--bg, #0b0d10);
+        white-space: nowrap;
+      }
+      .cite-tier.t-reg {
+        background: var(--act-reg);
+      }
+      .cite-tier.t-comp {
+        background: var(--act-comp);
+      }
+      .cite-tier.t-journ {
+        background: var(--act-journ);
+      }
+      .cite-tier.t-anal {
+        background: var(--act-anal);
+      }
+      .cite-tier.t-industry {
+        background: var(--act-industry);
+      }
+      .cite-tier.t-sell {
+        background: var(--act-sell);
+      }
+      .cite-tier.t-buy {
+        background: var(--act-buy);
+      }
+      .cite-tier.t-opinion {
+        background: var(--act-opinion);
+      }
+      .cite-link {
+        color: var(--text);
+        text-decoration: none;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .cite-link:hover {
+        color: var(--act-accent);
+        text-decoration: underline;
+      }
+      .cite-date {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        color: var(--text-muted);
+      }
+      .cite.placeholder .cite-link {
+        color: var(--text-muted);
+        cursor: not-allowed;
+        text-decoration: none;
+      }
+      .cite.placeholder .cite-link:hover {
+        color: var(--text-muted);
+        text-decoration: none;
+      }
+      .cite-flag {
+        font-family: var(--font-mono);
+        font-size: 8.5px;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        padding: 1px 4px;
+        border-radius: 2px;
+        background: rgba(240, 198, 116, 0.15);
+        color: var(--act-flag);
+        margin-left: 4px;
+      }
+
+      /* Actor inspector cite section — collapsed-by-default details
+         element with a "n cites · expand" summary; same .cite-list
+         renders the aggregated cross-edge list. */
+      .act-cites {
+        margin: 8px 0 0;
+        padding: 0;
+        border-top: 1px solid var(--border);
+        padding-top: 8px;
+      }
+      .act-cites > summary {
+        cursor: pointer;
+        list-style: none;
+        font-family: var(--font-mono);
+        font-size: 10px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--act-accent);
+        padding: 3px 0 3px 16px;
+        position: relative;
+      }
+      .act-cites > summary::-webkit-details-marker {
+        display: none;
+      }
+      .act-cites > summary::before {
+        content: "+";
+        position: absolute;
+        left: 0;
+        top: 2px;
+        width: 12px;
+        text-align: center;
+        font-size: 12px;
+        color: var(--act-accent);
+      }
+      .act-cites[open] > summary::before {
+        content: "−";
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <!-- ── Header ─────────────────────────────────────── -->
+      <header id="header">
+        <div class="h-brand">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <circle cx="7" cy="7" r="6" stroke="#4a9ef8" stroke-width="1.2" />
+            <circle cx="7" cy="7" r="2.5" fill="#4a9ef8" opacity=".4" />
+            <line
+              x1="7"
+              y1="1"
+              x2="7"
+              y2="13"
+              stroke="#4a9ef8"
+              stroke-width=".8"
+              opacity=".4"
+            />
+            <line
+              x1="1"
+              y1="7"
+              x2="13"
+              y2="7"
+              stroke="#4a9ef8"
+              stroke-width=".8"
+              opacity=".4"
+            />
+          </svg>
+          <b>AI ECONOMY</b> EXPLORER
+        </div>
+        <div class="h-search">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <circle
+              cx="4.8"
+              cy="4.8"
+              r="3.3"
+              stroke="currentColor"
+              stroke-width="1.2"
+            />
+            <line
+              x1="7.3"
+              y1="7.3"
+              x2="11"
+              y2="11"
+              stroke="currentColor"
+              stroke-width="1.2"
+              stroke-linecap="round"
+            />
+          </svg>
+          <input
+            id="search"
+            type="text"
+            placeholder="Search by label, ticker, type — OpenAI, NVDA, ChipMaker, ModelLab…"
+            spellcheck="false"
+            autocomplete="off"
+          />
+        </div>
+        <div class="h-stats">
+          <!-- Counts populated at runtime from the projection (see
+               script: stats[0]/stats[1]/stats[2]). Render as em-dashes
+               so a slow fetch doesn't flash stale numbers. -->
+          <div class="h-stat"><b>—</b>&nbsp;entities</div>
+          <div class="h-stat"><b>—</b>&nbsp;edges</div>
+          <div class="h-stat h-stat--live"><b>—</b>&nbsp;built</div>
+        </div>
+      </header>
+
+      <!-- ── Sidebar ────────────────────────────────────── -->
+      <aside id="sidebar">
+        <div class="s-section"><div class="s-label">Views</div></div>
+        <!-- Populated at runtime from data.views (T-Box → projection JSON). -->
+        <ul class="view-list" id="view-list"></ul>
+
+        <!-- Edge filters — pattern (b): uncheck to hide.
+             All checked by default (subject to lifecycle defaults). -->
+        <div class="s-rule"></div>
+        <div class="s-section"><div class="s-label">Filters · edges</div></div>
+        <div class="filter-block" id="confidence-filter">
+          <div class="f-sublabel">Confidence</div>
+          <label class="f-item"
+            ><input type="checkbox" data-confidence="high" checked />
+            HIGH</label
+          >
+          <label class="f-item"
+            ><input type="checkbox" data-confidence="medium" checked />
+            MEDIUM</label
+          >
+          <label class="f-item"
+            ><input type="checkbox" data-confidence="low" checked /> LOW</label
+          >
+        </div>
+        <div class="filter-block" id="status-filter">
+          <div class="f-sublabel">Status</div>
+          <label class="f-item"
+            ><input type="checkbox" data-status="active" checked />
+            ACTIVE</label
+          >
+          <label class="f-item"
+            ><input type="checkbox" data-status="announced" checked />
+            ANNOUNCED</label
+          >
+          <label class="f-item"
+            ><input type="checkbox" data-status="reported" checked />
+            REPORTED</label
+          >
+          <label class="f-item"
+            ><input type="checkbox" data-status="expired" /> EXPIRED</label
+          >
+          <label class="f-item"
+            ><input type="checkbox" data-status="rumored" /> RUMORED</label
+          >
+        </div>
+        <!-- Provenance — attribution edges from newsroom actors to the
+             relationships they cited. Off by default; the visible graph
+             stays focused on hasParty edges unless the user opts in. -->
+        <div class="filter-block" id="attribution-filter">
+          <div class="f-sublabel">Provenance</div>
+          <label class="f-item"
+            ><input type="checkbox" id="attribution-toggle" /> SHOW
+            ATTRIBUTION</label
+          >
+          <label class="f-item"
+            ><input type="checkbox" id="isolated-toggle" /> SHOW
+            ISOLATED</label
+          >
+        </div>
+
+        <!-- Node focus — pattern (a): exclusive include.
+             None checked = show all. Any checked = show only matching
+             nodes (union across the checked types). Distinct semantics
+             from the edge filters above. -->
+        <div class="s-rule"></div>
+        <div class="s-section"><div class="s-label">Focus · nodes</div></div>
+        <div class="filter-block" id="node-focus">
+          <div class="f-sublabel">Node type</div>
+          <label class="f-item"
+            ><input type="checkbox" data-focus="FrontierModelLab" /> FRONTIER
+            LABS</label
+          >
+          <label class="f-item"
+            ><input type="checkbox" data-focus="NewsSource" /> NEWS
+            SOURCES</label
+          >
+          <label class="f-item"
+            ><input type="checkbox" data-focus="JointVenture" /> JOINT
+            VENTURES</label
+          >
+          <label class="f-item"
+            ><input type="checkbox" data-focus="OSAT" /> OSAT</label
+          >
+          <label class="f-item"
+            ><input type="checkbox" data-focus="SubstrateMaker" />
+            SUBSTRATE</label
+          >
+          <label class="f-item"
+            ><input type="checkbox" data-focus="WaferMaker" /> WAFERS</label
+          >
+          <label class="f-item"
+            ><input type="checkbox" data-focus="ChemicalSupplier" />
+            CHEMICALS</label
+          >
+          <label class="f-item"
+            ><input type="checkbox" data-focus="PhotomaskMaker" /> MASKS</label
+          >
+        </div>
+
+        <div class="s-rule"></div>
+        <div class="s-section"><div class="s-label">Layout</div></div>
+        <div class="filter-block">
+          <button
+            id="layout-reset"
+            type="button"
+            class="layout-btn"
+            title="Discard saved node positions and re-run ForceAtlas2"
+          >
+            RESET POSITIONS
+          </button>
+        </div>
+
+        <div class="s-rule"></div>
+        <div class="s-section"><div class="s-label">Legend</div></div>
+        <!-- Populated at runtime from data.views (T-Box → projection JSON). -->
+        <div class="legend" id="legend"></div>
+      </aside>
+
+      <!-- ── Graph Canvas ───────────────────────────────── -->
+      <main id="canvas">
+        <div id="graph"></div>
+      </main>
+
+      <!-- ── Inspector ──────────────────────────────────── -->
+      <aside id="inspector">
+        <div class="i-empty" id="i-empty">
+          <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+            <rect
+              x="3"
+              y="3"
+              width="30"
+              height="30"
+              stroke="currentColor"
+              stroke-width="1.5"
+            />
+            <line
+              x1="3"
+              y1="11"
+              x2="33"
+              y2="11"
+              stroke="currentColor"
+              stroke-width="1"
+            />
+            <line
+              x1="9"
+              y1="18"
+              x2="27"
+              y2="18"
+              stroke="currentColor"
+              stroke-width="1"
+            />
+            <line
+              x1="9"
+              y1="23"
+              x2="21"
+              y2="23"
+              stroke="currentColor"
+              stroke-width="1"
+            />
+          </svg>
+          SELECT A NODE<br />OR EDGE
+        </div>
+
+        <!-- ── Edge: Microsoft → OpenAI ────────────────── -->
+        <div class="i-panel" id="i-edge-ms-oai">
+          <div class="i-head">
+            <div class="i-badge badge-capital">STRATEGIC PARTNERSHIP</div>
+            <div class="i-title">Microsoft → OpenAI</div>
+            <div class="i-subtitle">rel.microsoft.openai.strategic.2023</div>
+          </div>
+          <div class="i-sec">
+            <div class="i-sec-label">Parties</div>
+            <div class="party">
+              <div class="party-name">Microsoft</div>
+              <div class="party-role">▸ CapitalProvider</div>
+              <div class="party-role">▸ CloudProvider</div>
+              <div class="party-role">▸ DistributionProvider</div>
+            </div>
+            <div class="party">
+              <div class="party-name">OpenAI</div>
+              <div class="party-role">▸ ModelProvider</div>
+            </div>
+          </div>
+          <div class="i-sec">
+            <div class="i-sec-label">Resources</div>
+            <span class="res-tag">azure_cloud_compute</span>
+            <span class="res-tag">openai_models</span>
+            <span class="res-tag">ip_license</span>
+          </div>
+          <div class="i-sec">
+            <div class="i-sec-label">Commitment</div>
+            <div class="i-row">
+              <span class="i-key">AMOUNT</span>
+              <span class="i-val money">$13,000,000,000</span>
+            </div>
+            <div class="i-row">
+              <span class="i-key">TYPE</span>
+              <span class="i-val">MonetaryCommitment</span>
+            </div>
+            <div class="i-row">
+              <span class="i-key">CONFIDENCE</span
+              ><span class="i-val">reported</span>
+            </div>
+          </div>
+          <div class="i-sec">
+            <div class="i-sec-label">Status</div>
+            <div class="i-row">
+              <span class="i-key">STATUS</span
+              ><span class="status-pill s-active">ACTIVE</span>
+            </div>
+            <div class="i-row">
+              <span class="i-key">SINCE</span>
+              <span class="i-val">2023-01-23</span>
+            </div>
+            <div class="i-row">
+              <span class="i-key">CONFIDENCE</span>
+              <span class="i-val">
+                <span class="conf-row">
+                  <span class="c-dot on"></span><span class="c-dot on"></span
+                  ><span class="c-dot on"></span>
+                  HIGH
+                </span>
+              </span>
+            </div>
+          </div>
+          <div class="i-sec">
+            <div class="i-sec-label">Evidence</div>
+            <div class="ev-item">
+              <div class="ev-type">CompanyAnnouncement</div>
+              <div class="ev-date">2023-01-23</div>
+              <a href="#" class="ev-link">
+                <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
+                  <path
+                    d="M1 7L7 1M7 1H3M7 1V5"
+                    stroke="currentColor"
+                    stroke-width="1.2"
+                  />
+                </svg>
+                View source
+              </a>
+            </div>
+            <div class="ev-item">
+              <div class="ev-type">SEC Disclosure 10-K</div>
+              <div class="ev-date">2024-07-29</div>
+              <a href="#" class="ev-link">
+                <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
+                  <path
+                    d="M1 7L7 1M7 1H3M7 1V5"
+                    stroke="currentColor"
+                    stroke-width="1.2"
+                  />
+                </svg>
+                View source
+              </a>
+            </div>
+          </div>
+          <div class="i-sec">
+            <div class="i-row">
+              <span class="i-key">UPDATED</span
+              ><span class="i-val dim">2026-04-15</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Edge: Amazon → Anthropic ────────────────── -->
+        <div class="i-panel" id="i-edge-amz-ant">
+          <div class="i-head">
+            <div class="i-badge badge-capital">EQUITY INVESTMENT</div>
+            <div class="i-title">Amazon → Anthropic</div>
+            <div class="i-subtitle">rel.amazon.anthropic.investment.2023</div>
+          </div>
+          <div class="i-sec">
+            <div class="i-sec-label">Parties</div>
+            <div class="party">
+              <div class="party-name">Amazon</div>
+              <div class="party-role">▸ CapitalProvider</div>
+              <div class="party-role">▸ CloudProvider (AWS)</div>
+            </div>
+            <div class="party">
+              <div class="party-name">Anthropic</div>
+              <div class="party-role">▸ ModelProvider</div>
+            </div>
+          </div>
+          <div class="i-sec">
+            <div class="i-sec-label">Commitment</div>
+            <div class="i-row">
+              <span class="i-key">AMOUNT</span>
+              <span class="i-val money">$4,000,000,000</span>
+            </div>
+            <div class="i-row">
+              <span class="i-key">TYPE</span>
+              <span class="i-val">EquityInvestment</span>
+            </div>
+            <div class="i-row">
+              <span class="i-key">CONFIDENCE</span
+              ><span class="i-val">reported</span>
+            </div>
+          </div>
+          <div class="i-sec">
+            <div class="i-sec-label">Status</div>
+            <div class="i-row">
+              <span class="i-key">STATUS</span
+              ><span class="status-pill s-active">ACTIVE</span>
+            </div>
+            <div class="i-row">
+              <span class="i-key">CONFIDENCE</span>
+              <span class="i-val">
+                <span class="conf-row">
+                  <span class="c-dot on"></span><span class="c-dot on"></span
+                  ><span class="c-dot on"></span>
+                  HIGH
+                </span>
+              </span>
+            </div>
+          </div>
+          <div class="i-sec">
+            <div class="i-sec-label">Evidence</div>
+            <div class="ev-item">
+              <div class="ev-type">CompanyAnnouncement</div>
+              <div class="ev-date">2023-09-25</div>
+              <a href="#" class="ev-link">
+                <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
+                  <path
+                    d="M1 7L7 1M7 1H3M7 1V5"
+                    stroke="currentColor"
+                    stroke-width="1.2"
+                  />
+                </svg>
+                View source
+              </a>
+            </div>
+          </div>
+          <div class="i-sec">
+            <div class="i-row">
+              <span class="i-key">UPDATED</span
+              ><span class="i-val dim">2026-04-15</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Node: OpenAI ─────────────────────────────── -->
+        <div class="i-panel" id="i-node-openai">
+          <div class="i-head">
+            <div class="i-badge badge-lab">MODEL LAB</div>
+            <div class="i-title">OpenAI</div>
+            <div class="i-subtitle">org.openai</div>
+          </div>
+          <div class="i-sec">
+            <div class="i-sec-label">Identity</div>
+            <div class="i-row">
+              <span class="i-key">TYPE</span>
+              <span class="i-val">ModelLab</span>
+            </div>
+            <div class="i-row">
+              <span class="i-key">WEBSITE</span
+              ><span class="i-val dim">openai.com</span>
+            </div>
+          </div>
+          <div class="i-sec">
+            <div class="i-sec-label">Relationships</div>
+            <div class="i-row">
+              <span class="i-key">CAPITAL IN</span>
+              <span class="i-val money">3 edges</span>
+            </div>
+            <div class="i-row">
+              <span class="i-key">COMPUTE OUT</span
+              ><span class="i-val compute">1 edge (Azure)</span>
+            </div>
+            <div class="i-row">
+              <span class="i-key">STRATEGIC</span>
+              <span class="i-val strategic">1 edge</span>
+            </div>
+          </div>
+          <div class="i-sec">
+            <div class="i-sec-label">Top Backers</div>
+            <div class="i-row">
+              <span class="i-key">Microsoft</span
+              ><span class="i-val money">$13B+</span>
+            </div>
+            <div class="i-row">
+              <span class="i-key">Google</span>
+              <span class="i-val dim">reported</span>
+            </div>
+          </div>
+          <div class="i-sec">
+            <div class="i-row">
+              <span class="i-key">UPDATED</span
+              ><span class="i-val dim">2026-04-15</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Node: NVIDIA ──────────────────────────────── -->
+        <div class="i-panel" id="i-node-nvidia">
+          <div class="i-head">
+            <div class="i-badge badge-chips">CHIP MAKER</div>
+            <div class="i-title">NVIDIA</div>
+            <div class="i-subtitle">org.nvidia</div>
+          </div>
+          <div class="i-sec">
+            <div class="i-sec-label">Identity</div>
+            <div class="i-row">
+              <span class="i-key">TYPE</span>
+              <span class="i-val">ChipMaker</span>
+            </div>
+            <div class="i-row">
+              <span class="i-key">TICKER</span><span class="i-val">NVDA</span>
+            </div>
+          </div>
+          <div class="i-sec">
+            <div class="i-sec-label">Relationships</div>
+            <div class="i-row">
+              <span class="i-key">CHIPS OUT</span>
+              <span class="i-val chips">4 edges</span>
+            </div>
+            <div class="i-row">
+              <span class="i-key">CAPITAL OUT</span
+              ><span class="i-val money">1 edge (IREN warrant)</span>
+            </div>
+            <div class="i-row">
+              <span class="i-key">SUPPLY IN</span>
+              <span class="i-val chips">2 edges (TSMC, memory)</span>
+            </div>
+          </div>
+          <div class="i-sec">
+            <div class="i-sec-label">Key Customers</div>
+            <div class="i-row">
+              <span class="i-key">Azure</span
+              ><span class="i-val chips">H100 / GB200</span>
+            </div>
+            <div class="i-row">
+              <span class="i-key">AWS</span>
+              <span class="i-val chips">H100</span>
+            </div>
+            <div class="i-row">
+              <span class="i-key">IREN</span>
+              <span class="i-val chips">Blackwell</span>
+            </div>
+          </div>
+          <div class="i-sec">
+            <div class="i-row">
+              <span class="i-key">UPDATED</span
+              ><span class="i-val dim">2026-04-15</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Generic / dynamic panel ───────────────────── -->
+        <div class="i-panel" id="i-dynamic">
+          <div class="i-head">
+            <div class="i-badge badge-entity" id="dyn-badge">ENTITY</div>
+            <div class="i-title" id="dyn-title">—</div>
+            <div class="i-subtitle" id="dyn-subtitle"></div>
+          </div>
+          <div class="i-sec" id="dyn-body"></div>
+        </div>
+      </aside>
+    </div>
+
+    <script type="module">
+      import Graph from "https://esm.sh/graphology@0.25.4";
+      import forceAtlas2 from "https://esm.sh/graphology-layout-forceatlas2@0.10.1";
+      import circular from "https://esm.sh/graphology-layout@0.6.1/circular";
+      import Sigma from "https://esm.sh/sigma@3.0.3";
+      // ?deps=sigma@3.0.3 pins the curve package's internal sigma import to the
+      // same version we load directly. Without it, esm.sh's range resolver for
+      // `sigma@>=3.0.0-beta.10` can pick a different version that's missing the
+      // DEFAULT_EDGE_ARROW_HEAD_PROGRAM_OPTIONS export the curve package uses.
+      import {
+        EdgeCurvedArrowProgram,
+        indexParallelEdgesIndex,
+      } from "https://esm.sh/@sigma/edge-curve@3.1.0?deps=sigma@3.0.3";
+
+      // ── HTML escape ────────────────────────────────────
+      // Defence-in-depth for any string interpolated into an
+      // innerHTML / template-literal HTML output. The primary trust
+      // boundary is the projection (ADR 007 § EXP-005 — pipeline-side
+      // slugification + viewColor regex check); this helper exists so
+      // user-visible string fields (cite titles, URLs, dates, actor
+      // labels) cannot smuggle markup or attribute breakouts into
+      // rendered HTML. Covers the five HTML-significant characters:
+      // & < > " '. Used by both the edge inspector and the actor
+      // inspector — hoisted here so call-site order doesn't matter.
+      const htmlEsc = (s) =>
+        String(s ?? "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+
+      // ── Visual mappings ────────────────────────────────
+      // Edge color = view membership. An edge can belong to multiple views;
+      // VIEW_PRECEDENCE picks one for color. Filtering uses the full views[].
+      // VIEW_COLORS is populated at runtime from `data.views` (T-Box
+      // `aie:viewColor` → projection JSON). One source of truth shared with
+      // the legend swatches and the Sigma edge-colour assignment.
+      let VIEW_COLORS = {};
+      let VIEW_PRECEDENCE = [];
+      const NODE_COLORS = {
+        Investor: "#5090c0",
+        SovereignActor: "#c9a13b",
+        Cloud: "#4a9ef8",
+        Neocloud: "#4a9ef8",
+        ChipMaker: "#9060f0",
+        Foundry: "#b080ff",
+        FabEquipment: "#c898d8",
+        MemoryMaker: "#b080ff",
+        IPLicensor: "#a878d8",
+        EDAVendor: "#7a5fb8",
+        Photonics: "#5fb8a8",
+        ModelLab: "#d04860",
+        FrontierModelLab: "#d04860",
+        Application: "#e0a040",
+        PowerProvider: "#20c47a",
+        JointVenture: "#6e8aa0",
+        Country: "#7a8499",
+        Region: "#7a8499",
+        OSAT: "#5a8a4a",
+        SubstrateMaker: "#b8553a",
+        WaferMaker: "#a07550",
+        ChemicalSupplier: "#c2b22d",
+        PhotomaskMaker: "#6f7a8c",
+      };
+      // Multi-typed actors (ARM = IPLicensor + ChipMaker; Intel = ChipMaker + Foundry;
+      // Microsoft = Investor + ChipMaker; SNPS = EDAVendor + IPLicensor) need a
+      // precedence so colour is deterministic. The list orders by visual
+      // load-bearing-ness in an AI-economy graph: model labs and chip designers
+      // sit at the top, support layers below.
+      // FrontierModelLab sits below ModelLab so frontier labs read with the
+      // same lab colour (they always multi-type [ModelLab, FrontierModelLab]).
+      // Country / Region sit at the very bottom — usually the only type on
+      // their actors, but if a country ever multi-types with Investor or
+      // similar the more specific role should take precedence.
+      const TYPE_PRECEDENCE = [
+        "ModelLab",
+        "FrontierModelLab",
+        "ChipMaker",
+        "Foundry",
+        "OSAT",
+        "FabEquipment",
+        "MemoryMaker",
+        "SubstrateMaker",
+        "WaferMaker",
+        "ChemicalSupplier",
+        "PhotomaskMaker",
+        "Photonics",
+        "EDAVendor",
+        "IPLicensor",
+        "Cloud",
+        "Neocloud",
+        "PowerProvider",
+        "Application",
+        "JointVenture",
+        "SovereignActor",
+        "Investor",
+        "Country",
+        "Region",
+      ];
+      const NODE_FALLBACK = "#888";
+      const EDGE_FALLBACK = "#888";
+
+      const primaryView = (views) =>
+        VIEW_PRECEDENCE.find((v) => views.includes(v)) || views[0] || null;
+      const primaryType = (types) =>
+        TYPE_PRECEDENCE.find((t) => types.includes(t)) || types[0] || null;
+
+      // ── Load projection JSON ───────────────────────────
+      // Authoring mode serves repo root, where the graph lives at
+      // dist/graph.graphology.json. Deploy/preview mode often serves dist/ as the
+      // web root, where the same file lives next to index.html.
+      const graphCandidates = ["dist/graph.graphology.json", "graph.graphology.json"];
+      let res = null;
+      for (const candidate of graphCandidates) {
+        const candidateRes = await fetch(candidate);
+        if (candidateRes.ok) {
+          res = candidateRes;
+          break;
+        }
+      }
+      if (!res) {
+        document.getElementById("graph").textContent =
+          "Failed to load graph.graphology.json — run `bun run build` and serve either the repo root or dist/.";
+        throw new Error(`fetch failed: ${graphCandidates.join(", ")}`);
+      }
+      const data = await res.json();
+
+      // ── Views: hydrate colour map + legend from projection ──
+      // data.views is the canonical list of GraphView individuals from
+      // the T-Box (label, order, hex, cssClass). Populate VIEW_COLORS
+      // for the edge renderer, inject CSS rules for the legend
+      // swatches, then render legend rows. Adding a view in the
+      // ontology + rebuilding is enough to make it appear here — no
+      // mockup edits required.
+      //
+      // ADR 007 § EXP-005: v.cssClass is pre-slugified by
+      // pipeline/build-views.py (raises on a malformed name there
+      // rather than producing broken CSS here), and v.color has
+      // already been validated as a 6-digit hex. Both can therefore
+      // be interpolated directly into class names and CSS rules. The
+      // user-visible legend label still goes through htmlEsc as
+      // defence-in-depth.
+      const orderedViews = [...(data.views || [])].sort(
+        (a, b) => (a.order ?? 0) - (b.order ?? 0) || a.name.localeCompare(b.name),
+      );
+      VIEW_PRECEDENCE = orderedViews.map((v) => v.name);
+      for (const v of orderedViews) VIEW_COLORS[v.name] = v.color;
+
+      const viewLabel = (name) => name.toUpperCase();
+
+      const viewListEl = document.getElementById("view-list");
+      if (viewListEl) {
+        viewListEl.innerHTML = [
+          `<li class="view-item active" data-view="all"><span class="v-dot"></span> ALL</li>`,
+          ...orderedViews.map(
+            (v) =>
+              `<li class="view-item" data-view="${htmlEsc(v.name)}" style="--view-color: ${v.color}"><span class="v-dot"></span> ${htmlEsc(viewLabel(v.name))}</li>`,
+          ),
+        ].join("");
+      }
+
+      const swatchSheet = document.createElement("style");
+      swatchSheet.textContent = orderedViews
+        .map((v) => `.ll-${v.cssClass} { background: ${v.color}; }`)
+        .join("\n");
+      document.head.appendChild(swatchSheet);
+
+      const legendEl = document.getElementById("legend");
+      if (legendEl) {
+        legendEl.innerHTML = orderedViews
+          .map(
+            (v) =>
+              `<div class="l-item"><div class="l-line ll-${v.cssClass}"></div>${htmlEsc(viewLabel(v.name))}</div>`,
+          )
+          .join("");
+      }
+
+      // ── Build Graphology graph ─────────────────────────
+      const graph = new Graph({
+        type: "directed",
+        multi: true,
+        allowSelfLoops: false,
+      });
+
+      for (const n of data.nodes) {
+        const types = n.attributes.types || [n.attributes.type];
+        const pt = primaryType(types);
+        graph.addNode(n.key, {
+          label: n.attributes.label,
+          actorType: pt,
+          actorTypes: types,
+          ticker: n.attributes.ticker,
+          website: n.attributes.website,
+          annualRevenueUSD: n.attributes.annualRevenueUSD ?? null,
+          annualRevenueAsOf: n.attributes.annualRevenueAsOf || null,
+          annualRevenueConfidence: n.attributes.annualRevenueConfidence || null,
+          // ADR 003 § FRO-003 — `frontier` is pre-derived in the projection
+          // builder; `headquarteredIn` carries {key, label, isoCode?} for
+          // inspector rendering without a second lookup.
+          frontier: !!n.attributes.frontier,
+          headquarteredIn: n.attributes.headquarteredIn || null,
+          isoCode: n.attributes.isoCode || null,
+          // Pre-computed per-node analytics (monIn/monOut/HHI/tierMix/
+          // reach2hop). Schema lives at src/analytics-schema.ts; the
+          // pipeline (build-views.py) emits, validate-projection.ts
+          // verifies. Consumer reads it directly — no recomputation here.
+          analytics: n.attributes.analytics || null,
+          color: NODE_COLORS[pt] || NODE_FALLBACK,
+          size: 10,
+        });
+      }
+
+      // Attribution edges (kind: "attribution") render dimly with no
+      // label; they exist to surface PROV-O lineage from newsroom nodes
+      // that would otherwise appear orphan. `attrs.confidence` and
+      // `attrs.status` are absent on these edges — the edge filter logic
+      // accommodates that with a kind check.
+      const ATTRIBUTION_COLOR = "#5a5d6a";
+      for (const e of data.edges) {
+        const a = e.attributes;
+        if (a.kind === "attribution") {
+          graph.addEdgeWithKey(e.key, e.source, e.target, {
+            label: "",
+            color: ATTRIBUTION_COLOR,
+            kind: "attribution",
+            relType: a.type,
+            relationship: a.relationship,
+            views: [],
+            size: 1,
+            type: "arrow",
+          });
+          continue;
+        }
+        const pv = primaryView(a.views || []);
+        graph.addEdgeWithKey(e.key, e.source, e.target, {
+          label: a.type,
+          color: VIEW_COLORS[pv] || EDGE_FALLBACK,
+          primaryView: pv,
+          views: a.views || [],
+          relType: a.type,
+          status: a.status,
+          confidence: a.confidence,
+          fromRoles: a.fromRoles || [],
+          toRoles: a.toRoles || [],
+          commitments: a.commitments || [],
+          evidenceCount: a.evidenceCount || 0,
+          evidenceTiers: a.evidenceTiers || {},
+          evidence: a.evidence || [],
+          effectiveDate: a.effectiveDate || null,
+          size: 2.5,
+          type: "arrow",
+        });
+      }
+
+      // ── Filter-label counts ───────────────────────────────────────────
+      // Append "(N)" to each checkbox label so the user can see at a
+      // glance which filter values exist in the live data vs which are
+      // SHACL-permitted but currently unused. One-shot — counts come from
+      // the projection JSON loaded above and don't change at runtime.
+      const edgeConfidenceCounts = {};
+      const edgeStatusCounts = {};
+      const nodeTypeCounts = {};
+      const incidentNodeKeys = new Set();
+      let attributionEdgeCount = 0;
+      for (const e of data.edges) {
+        if (e.attributes.kind === "attribution") {
+          attributionEdgeCount++;
+          continue;
+        }
+        incidentNodeKeys.add(e.source);
+        incidentNodeKeys.add(e.target);
+        const c = e.attributes.confidence;
+        const s = e.attributes.status;
+        if (c) edgeConfidenceCounts[c] = (edgeConfidenceCounts[c] || 0) + 1;
+        if (s) edgeStatusCounts[s] = (edgeStatusCounts[s] || 0) + 1;
+      }
+      for (const n of data.nodes) {
+        for (const t of n.attributes.types || []) {
+          nodeTypeCounts[t] = (nodeTypeCounts[t] || 0) + 1;
+        }
+      }
+      const annotateLabel = (input, count) => {
+        const label = input.closest("label");
+        if (!label) return;
+        for (const node of label.childNodes) {
+          if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
+            node.textContent = ` ${node.textContent.trim()} (${count})`;
+            return;
+          }
+        }
+      };
+      document
+        .querySelectorAll("#confidence-filter input[data-confidence]")
+        .forEach((i) =>
+          annotateLabel(i, edgeConfidenceCounts[i.dataset.confidence] || 0),
+        );
+      document
+        .querySelectorAll("#status-filter input[data-status]")
+        .forEach((i) => annotateLabel(i, edgeStatusCounts[i.dataset.status] || 0));
+      document
+        .querySelectorAll("#node-focus input[data-focus]")
+        .forEach((i) => annotateLabel(i, nodeTypeCounts[i.dataset.focus] || 0));
+      const attrToggleEl = document.getElementById("attribution-toggle");
+      if (attrToggleEl) annotateLabel(attrToggleEl, attributionEdgeCount);
+      const isolatedToggleEl = document.getElementById("isolated-toggle");
+      if (isolatedToggleEl) {
+        annotateLabel(isolatedToggleEl, data.nodes.length - incidentNodeKeys.size);
+      }
+
+      // ── Position persistence (localStorage) ───────────────────────────
+      // Bump the :v suffix to invalidate stored positions if the schema changes.
+      const POS_STORAGE_KEY = "ai-economy-explorer:node-positions:v1";
+
+      const loadStoredPositions = () => {
+        try {
+          const raw = localStorage.getItem(POS_STORAGE_KEY);
+          return raw ? JSON.parse(raw) : {};
+        } catch {
+          return {};
+        }
+      };
+      const saveStoredPositions = (positions) => {
+        try {
+          localStorage.setItem(POS_STORAGE_KEY, JSON.stringify(positions));
+        } catch {
+          // localStorage can throw (private mode, quota) — silently fall back
+          // to in-memory only; user just loses persistence across reloads.
+        }
+      };
+      const persistNodePosition = (nodeKey) => {
+        const positions = loadStoredPositions();
+        positions[nodeKey] = {
+          x: graph.getNodeAttribute(nodeKey, "x"),
+          y: graph.getNodeAttribute(nodeKey, "y"),
+        };
+        saveStoredPositions(positions);
+      };
+
+      // ── Layout: circular seed → stored override → ForceAtlas2 → re-pin ─
+      // Apply stored positions BEFORE ForceAtlas2 so they act as the layout
+      // anchor. New nodes (no stored position) start at circular and FA2
+      // pulls them toward their connected neighbours (already at user-saved
+      // coords). Then re-apply stored positions to undo any FA2 perturbation
+      // of pinned nodes — net effect: stored nodes stay exactly put, new
+      // nodes settle next to them naturally instead of in a far-off cluster.
+      circular.assign(graph);
+      const stored = loadStoredPositions();
+      const hasStored = Object.keys(stored).length > 0;
+      if (hasStored) {
+        graph.forEachNode((node) => {
+          if (stored[node]) {
+            graph.setNodeAttribute(node, "x", stored[node].x);
+            graph.setNodeAttribute(node, "y", stored[node].y);
+          }
+        });
+      }
+      forceAtlas2.assign(graph, {
+        // Fewer iterations when stored positions exist — just enough to
+        // settle new nodes near neighbours without disturbing the rest.
+        iterations: hasStored ? 60 : 400,
+        settings: forceAtlas2.inferSettings(graph),
+      });
+      if (hasStored) {
+        graph.forEachNode((node) => {
+          if (stored[node]) {
+            graph.setNodeAttribute(node, "x", stored[node].x);
+            graph.setNodeAttribute(node, "y", stored[node].y);
+          }
+        });
+      }
+
+      // Update header counts + build timestamp to reflect real data.
+      // stats[0] = entities, stats[1] = edges, stats[2] = build date.
+      const stats = document.querySelectorAll(".h-stat b");
+      if (stats[0]) stats[0].textContent = String(graph.order);
+      if (stats[1]) stats[1].textContent = String(graph.size);
+      const builtAt = data.attributes && data.attributes.builtAt;
+      if (stats[2] && builtAt) stats[2].textContent = builtAt.slice(0, 10);
+
+      // ── Curve parallel edges so they fan out instead of stacking ────────
+      // Many actor pairs have multiple relationships (e.g. Microsoft↔OpenAI:
+      // equity + partnership; Amazon↔OpenAI: equity + partnership + compute).
+      // Default Sigma renders edges as straight lines, so parallels overlap
+      // pixel-for-pixel and labels stack illegibly. indexParallelEdgesIndex
+      // tags each edge with its position among parallels; we map that to a
+      // per-edge curvature centred on 0 so 1 edge stays straight, 2 edges
+      // fan ±0.2, 3 edges fan ±0.4 / 0, etc.
+      indexParallelEdgesIndex(graph, {
+        edgeIndexAttribute: "parallelIndex",
+        edgeMaxIndexAttribute: "parallelMaxIndex",
+      });
+      graph.forEachEdge((edge, attrs) => {
+        const max = attrs.parallelMaxIndex;
+        if (typeof max === "number" && max > 0) {
+          const N = max + 1;
+          const curvature = (attrs.parallelIndex - (N - 1) / 2) * 0.4;
+          graph.setEdgeAttribute(edge, "curvature", curvature);
+          graph.setEdgeAttribute(edge, "type", "curved");
+        }
+      });
+
+      // ── Sigma render ───────────────────────────────────
+      const container = document.getElementById("graph");
+      const renderer = new Sigma(graph, container, {
+        renderEdgeLabels: true,
+        defaultEdgeType: "arrow",
+        edgeProgramClasses: {
+          curved: EdgeCurvedArrowProgram,
+        },
+        labelColor: { color: "#cfcfcf" },
+        edgeLabelColor: { color: "#7a7a7a" },
+        labelFont: '"IBM Plex Mono", ui-monospace, monospace',
+        edgeLabelFont: '"IBM Plex Mono", ui-monospace, monospace',
+        labelSize: 12,
+        edgeLabelSize: 10,
+        labelWeight: "500",
+        labelRenderedSizeThreshold: 0,
+        // Sigma v3 disables edge hit-detection by default for performance.
+        // Without this flag, clickEdge / enterEdge / leaveEdge never fire.
+        enableEdgeEvents: true,
+      });
+
+      // ── View filter ────────────────────────────────────
+      let activeView = "all";
+      const viewItems = document.querySelectorAll("#view-list .view-item");
+      viewItems.forEach((el) => {
+        el.addEventListener("click", () => {
+          viewItems.forEach((x) => x.classList.remove("active"));
+          el.classList.add("active");
+          activeView = el.dataset.view;
+          renderer.refresh();
+        });
+      });
+
+      // ── Edge filters: Confidence + Status ──────────────
+      // Pattern (b) — uncheck a checkbox to hide edges with that value.
+      // Sets are kept in sync with the DOM via change listeners; the
+      // edgeReducer reads them as the source of truth on every refresh.
+      // Confidence values mirror SHACL `aie:confidenceLevel` on
+      // EconomicRelationship (`high | medium | low`); status mirrors
+      // `aie:relationshipStatus` (`active | expired | announced |
+      // reported | rumored`).
+      const collectChecked = (sel) =>
+        new Set(
+          Array.from(document.querySelectorAll(sel))
+            .filter((el) => el.checked)
+            .map((el) => el.dataset.confidence || el.dataset.status),
+        );
+      let allowedConfidences = collectChecked(
+        "#confidence-filter input[type=checkbox]",
+      );
+      let allowedStatuses = collectChecked("#status-filter input[type=checkbox]");
+      document
+        .querySelectorAll("#confidence-filter input[type=checkbox]")
+        .forEach((el) =>
+          el.addEventListener("change", () => {
+            allowedConfidences = collectChecked(
+              "#confidence-filter input[type=checkbox]",
+            );
+            renderer.refresh();
+          }),
+        );
+      document.querySelectorAll("#status-filter input[type=checkbox]").forEach((el) =>
+        el.addEventListener("change", () => {
+          allowedStatuses = collectChecked("#status-filter input[type=checkbox]");
+          renderer.refresh();
+        }),
+      );
+
+      // ── Provenance toggle ──────────────────────────────
+      // Attribution edges (newsroom → cited-relationship parties) are
+      // hidden by default. When enabled, they render dimly alongside
+      // the regular relationship graph. The toggle is opt-in so the
+      // baseline visualisation stays focused on hasParty edges.
+      let showAttribution = false;
+      const attributionToggle = document.getElementById("attribution-toggle");
+      attributionToggle.addEventListener("change", () => {
+        showAttribution = attributionToggle.checked;
+        renderer.refresh();
+      });
+
+      // ── Isolated actor toggle ──────────────────────────
+      // Actor records are useful as staged A-Box backlog, but the default
+      // graph should show relationships. Off by default: hide nodes with no
+      // currently visible incident edge. On: include actor-only records too.
+      let showIsolated = false;
+      const isolatedToggle = document.getElementById("isolated-toggle");
+      isolatedToggle.addEventListener("change", () => {
+        showIsolated = isolatedToggle.checked;
+        renderer.refresh();
+      });
+
+      // ── Node focus: exclusive include ──────────────────
+      // Pattern (a) — none checked = show everything; any checked =
+      // show only nodes whose type list includes any-of-checked.
+      // Generalises the original frontier-only toggle (ADR 003 §
+      // FRO-003) to any node-type axis the ontology exposes.
+      const collectFocus = () =>
+        new Set(
+          Array.from(document.querySelectorAll("#node-focus input[type=checkbox]"))
+            .filter((el) => el.checked)
+            .map((el) => el.dataset.focus),
+        );
+      let focusTypes = collectFocus();
+      document.querySelectorAll("#node-focus input[type=checkbox]").forEach((el) =>
+        el.addEventListener("change", () => {
+          focusTypes = collectFocus();
+          renderer.refresh();
+        }),
+      );
+      const matchesFocus = (types) => {
+        if (focusTypes.size === 0) return true;
+        return types.some((t) => focusTypes.has(t));
+      };
+
+      // ── Search ─────────────────────────────────────────
+      // Empty query: pass-through. Non-empty: matching nodes render normally,
+      // non-matching dim. Edges where neither endpoint matches dim too.
+      // Match is a case-insensitive substring against label, ticker, or any
+      // actorType (so "ChipMaker" highlights all 5 chip designers, "NVDA"
+      // highlights NVIDIA, "open" highlights OpenAI).
+      let searchQuery = "";
+      const DIM_NODE_COLOR = "#2a2a2a";
+      const DIM_EDGE_COLOR = "#1a1a1a";
+
+      const matchesSearch = (nodeKey, attrs) => {
+        if (!searchQuery) return true;
+        const q = searchQuery.toLowerCase();
+        if (nodeKey.toLowerCase().includes(q)) return true;
+        if ((attrs.label || "").toLowerCase().includes(q)) return true;
+        if ((attrs.ticker || "").toLowerCase().includes(q)) return true;
+        const types = attrs.actorTypes || (attrs.actorType ? [attrs.actorType] : []);
+        return types.some((t) => t.toLowerCase().includes(q));
+      };
+
+      const searchInput = document.getElementById("search");
+      searchInput.addEventListener("input", (e) => {
+        searchQuery = e.target.value.trim();
+        renderer.refresh();
+      });
+      // Escape clears the query
+      searchInput.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          searchInput.value = "";
+          searchQuery = "";
+          renderer.refresh();
+          searchInput.blur();
+        }
+      });
+
+      const relationshipEdgePassesFilters = (edge, attrs) => {
+        if (attrs.kind === "attribution") {
+          return showAttribution && activeView === "all";
+        }
+        if (activeView !== "all" && !(attrs.views || []).includes(activeView)) {
+          return false;
+        }
+        if (!allowedConfidences.has(attrs.confidence)) {
+          return false;
+        }
+        if (!allowedStatuses.has(attrs.status)) {
+          return false;
+        }
+        if (focusTypes.size > 0) {
+          const src = graph.source(edge);
+          const tgt = graph.target(edge);
+          if (
+            !matchesFocus(graph.getNodeAttribute(src, "actorTypes") || []) ||
+            !matchesFocus(graph.getNodeAttribute(tgt, "actorTypes") || [])
+          ) {
+            return false;
+          }
+        }
+        return true;
+      };
+
+      const nodeHasVisibleIncidentEdge = (node) => {
+        let visible = false;
+        graph.forEachEdge(node, (edge, eAttrs) => {
+          if (relationshipEdgePassesFilters(edge, eAttrs)) visible = true;
+        });
+        return visible;
+      };
+
+      renderer.setSetting("edgeReducer", (edge, attrs) => {
+        if (!relationshipEdgePassesFilters(edge, attrs)) return { ...attrs, hidden: true };
+        // Search dim: hide unless at least one endpoint matches
+        if (searchQuery) {
+          const src = graph.source(edge);
+          const tgt = graph.target(edge);
+          const srcMatch = matchesSearch(src, graph.getNodeAttributes(src));
+          const tgtMatch = matchesSearch(tgt, graph.getNodeAttributes(tgt));
+          if (!srcMatch && !tgtMatch) {
+            return { ...attrs, color: DIM_EDGE_COLOR, size: 0.5, label: "" };
+          }
+        }
+        return attrs;
+      });
+
+      renderer.setSetting("nodeReducer", (node, attrs) => {
+        // Node-focus filter — exclusive include
+        if (!matchesFocus(attrs.actorTypes || [])) {
+          return { ...attrs, hidden: true, label: "" };
+        }
+        // Relationship visibility — by default, hide actor records that have
+        // no currently visible incident edge. The SHOW ISOLATED toggle exposes
+        // staged A-Box actors / backlog nodes when needed.
+        if (!showIsolated && !nodeHasVisibleIncidentEdge(node)) {
+          return { ...attrs, hidden: true, label: "" };
+        }
+        // Search dim: dim non-matching nodes; force-show label on matches
+        if (searchQuery) {
+          if (!matchesSearch(node, attrs)) {
+            return { ...attrs, color: DIM_NODE_COLOR, label: "" };
+          }
+          return { ...attrs, forceLabel: true };
+        }
+        return attrs;
+      });
+
+      // ── Inspector wiring ───────────────────────────────
+      const allPanels = document.querySelectorAll(".i-panel");
+      const iEmpty = document.getElementById("i-empty");
+      const iDyn = document.getElementById("i-dynamic");
+      const dynBadge = document.getElementById("dyn-badge");
+      const dynTitle = document.getElementById("dyn-title");
+      const dynSubtitle = document.getElementById("dyn-subtitle");
+      const dynBody = document.getElementById("dyn-body");
+
+      function showEmpty() {
+        allPanels.forEach((p) => p.classList.remove("on"));
+        iEmpty.classList.remove("off");
+      }
+
+      function showDynamic() {
+        allPanels.forEach((p) => p.classList.remove("on"));
+        iEmpty.classList.add("off");
+        iDyn.classList.add("on");
+      }
+
+      function row(key, val, viewClass) {
+        const v = viewClass
+          ? `<span class="i-val ${viewClass}">${val}</span>`
+          : `<span class="i-val">${val}</span>`;
+        return `<div class="i-row"><span class="i-key">${key}</span>${v}</div>`;
+      }
+
+      // ─────────────────────────────────────────────────────────────
+      //  Edge inspector (analyst lens — inverted-pyramid)
+      //  Section order: identity → headline → capital flow → parties →
+      //  resources → data quality → FAQ. Reuses .act-block / .act-faq /
+      //  status-pill / tier-badge classes; only edge-specific atoms
+      //  (identity strip, party row, capital flow viz) get .edg-* prefix.
+      //  Money direction is role-based (CapitalProvider / Customer is
+      //  payer) — same rule as actor inspector and SPARQL pipeline, so
+      //  the IPO Issuer correctly reads as receiver despite the edge
+      //  pointing outward.
+      // ─────────────────────────────────────────────────────────────
+      function edgPrimaryTier(tiers) {
+        return actEdgePrimaryTier(tiers);
+      }
+
+      function edgFmtCommitment(c) {
+        if (c.amount != null) {
+          const b = c.amount / 1e9;
+          const m = c.amount / 1e6;
+          const num = b >= 1 ? `$${b.toFixed(2)}B` : `$${m.toFixed(0)}M`;
+          return c.currency && c.currency !== "USD" ? `${num} ${c.currency}` : num;
+        }
+        if (c.capacityValue != null) {
+          return `${c.capacityValue} ${c.capacityUnit || ""}`.trim();
+        }
+        return c.type || "—";
+      }
+
+      function edgFmtCommitmentLabel(c) {
+        // Commitment subtype label — distinguishes $ vs capacity rows when
+        // both are present on the same edge (compute / colocation deals).
+        if (c.amount != null) return "Monetary";
+        if (c.capacityValue != null) return "Capacity";
+        return c.type || "Commitment";
+      }
+
+      function edgIdentityBlock(edgeKey, src, tgt, srcLabel, tgtLabel, a) {
+        const tagPills = [];
+        if (a.primaryView) {
+          tagPills.push(
+            `<span class="edg-pill type">${htmlEsc(a.primaryView)}</span>`,
+          );
+        }
+        if (a.status) {
+          tagPills.push(
+            `<span class="status-pill s-${htmlEsc(a.status)}">${htmlEsc(a.status.toUpperCase())}</span>`,
+          );
+        }
+        if (a.confidence) {
+          tagPills.push(
+            `<span class="edg-pill">${htmlEsc(a.confidence.toUpperCase())}</span>`,
+          );
+        }
+        const meta = [];
+        if (a.relType) meta.push(`<span>${htmlEsc(a.relType)}</span>`);
+        if (a.effectiveDate) meta.push(`<span>${htmlEsc(a.effectiveDate)}</span>`);
+        meta.push(`<span>${htmlEsc(edgeKey)}</span>`);
+
+        return `<div class="edg-id">
+          <div class="edg-id-tags">${tagPills.join("")}</div>
+          <h2 class="edg-id-title">
+            <a class="actor-link" data-node="${htmlEsc(src)}">${htmlEsc(srcLabel)}</a>
+            <span class="edg-arrow">→</span>
+            <a class="actor-link" data-node="${htmlEsc(tgt)}">${htmlEsc(tgtLabel)}</a>
+          </h2>
+          <p class="edg-id-meta">${meta.join("")}</p>
+        </div>`;
+      }
+
+      function edgHeadlineSentence(a, srcLabel, tgtLabel, payer, receiver) {
+        const cmts = a.commitments || [];
+        const monetary = cmts.filter((c) => c.amount != null);
+        const capacity = cmts.filter((c) => c.capacityValue != null);
+        const totalMoney = monetary.reduce((s, c) => s + c.amount, 0);
+        const moneyStr = totalMoney > 0 ? actMoneyShort(totalMoney) : null;
+        const capStr = capacity.length
+          ? `${capacity[0].capacityValue} ${capacity[0].capacityUnit || ""}`.trim()
+          : null;
+
+        if (moneyStr && capStr) {
+          return `<strong>${htmlEsc(moneyStr)}</strong> across ${monetary.length} monetary commitment${monetary.length === 1 ? "" : "s"} · <strong>${htmlEsc(capStr)}</strong> capacity reserved.`;
+        }
+        if (moneyStr) {
+          if (payer && receiver) {
+            return `<strong>${htmlEsc(payer)}</strong> committed <strong>${htmlEsc(moneyStr)}</strong> to <strong>${htmlEsc(receiver)}</strong>.`;
+          }
+          return `<strong>${htmlEsc(moneyStr)}</strong> committed.`;
+        }
+        if (capStr) {
+          return `<strong>${htmlEsc(capStr)}</strong> capacity commitment.`;
+        }
+        return `${htmlEsc(a.relType || "Edge")} between <strong>${htmlEsc(srcLabel)}</strong> and <strong>${htmlEsc(tgtLabel)}</strong>${a.effectiveDate ? ` (${htmlEsc(a.effectiveDate)})` : ""}.`;
+      }
+
+      function edgHeadlineBlock(a, srcLabel, tgtLabel, payer, receiver) {
+        const cmts = a.commitments || [];
+        if (cmts.length === 0) return "";
+        const sentence = edgHeadlineSentence(a, srcLabel, tgtLabel, payer, receiver);
+        const items = cmts
+          .map((c) => {
+            const lbl = edgFmtCommitmentLabel(c);
+            const val = edgFmtCommitment(c);
+            const conf = c.confidenceLevel
+              ? `<span class="edg-cmt-lbl"> · ${htmlEsc(c.confidenceLevel)}</span>`
+              : "";
+            return `<li class="edg-cmt"><span class="edg-cmt-lbl">${htmlEsc(lbl)}${conf}</span><span class="edg-cmt-amt">${htmlEsc(val)}</span></li>`;
+          })
+          .join("");
+        return `<section class="act-block">
+          <div class="act-block-h"><span>At a glance</span><span class="act-block-h-c">${cmts.length} commitment${cmts.length === 1 ? "" : "s"}</span></div>
+          <p class="act-headline">${sentence}</p>
+          <ul class="edg-cmt-list">${items}</ul>
+        </section>`;
+      }
+
+      // Resolve which party is the payer using the same role-based rule
+      // as the SPARQL analytics query. Returns { payer, receiver } pairs
+      // of {key, label} or null when no monetary commitment exists.
+      function edgResolveFlow(a, src, tgt, srcLabel, tgtLabel) {
+        const hasMoney = (a.commitments || []).some((c) => c.amount != null);
+        if (!hasMoney) return null;
+        const fromIsPayer = actorIsPayer(a.fromRoles);
+        const toIsPayer = actorIsPayer(a.toRoles);
+        // If exactly one side has a payer role, that's the payer.
+        // If both or neither, fall back to edge direction (src → tgt).
+        if (fromIsPayer && !toIsPayer) {
+          return {
+            payer: { key: src, label: srcLabel },
+            receiver: { key: tgt, label: tgtLabel },
+          };
+        }
+        if (toIsPayer && !fromIsPayer) {
+          return {
+            payer: { key: tgt, label: tgtLabel },
+            receiver: { key: src, label: srcLabel },
+          };
+        }
+        return {
+          payer: { key: src, label: srcLabel },
+          receiver: { key: tgt, label: tgtLabel },
+        };
+      }
+
+      function edgFlowBlock(a, flow) {
+        if (!flow) return "";
+        const totalMoney = (a.commitments || [])
+          .filter((c) => c.amount != null)
+          .reduce((s, c) => s + c.amount, 0);
+        const amt = totalMoney > 0 ? actMoneyShort(totalMoney) : "—";
+        const fromIsPayer = actorIsPayer(a.fromRoles);
+        const toIsPayer = actorIsPayer(a.toRoles);
+        const note =
+          toIsPayer && !fromIsPayer
+            ? "Money flows opposite the edge direction — receiver's role drives payment, not edge order."
+            : fromIsPayer && !toIsPayer
+              ? "Money flows along the edge — source role identifies the payer."
+              : "Direction inferred from edge order — neither party carries an explicit payer role.";
+        return `<section class="act-block">
+          <div class="act-block-h"><span>Capital flow</span></div>
+          <div class="edg-flow">
+            <span class="edg-flow-actor payer"><a class="actor-link" data-node="${htmlEsc(flow.payer.key)}">${htmlEsc(flow.payer.label)}</a></span>
+            <span class="edg-flow-amt">${htmlEsc(amt)}</span>
+            <span class="edg-flow-actor recv"><a class="actor-link" data-node="${htmlEsc(flow.receiver.key)}">${htmlEsc(flow.receiver.label)}</a></span>
+          </div>
+          <p class="edg-flow-note">${htmlEsc(note)}</p>
+        </section>`;
+      }
+
+      function edgPartiesBlock(src, tgt, srcLabel, tgtLabel, a) {
+        const renderRow = (key, label, roles) => {
+          const roleStr = (roles || []).join(" · ") || "—";
+          return `<li class="edg-party">
+            <a class="edg-party-name actor-link" data-node="${htmlEsc(key)}">${htmlEsc(label)}</a>
+            <span class="edg-party-roles">${htmlEsc(roleStr)}</span>
+          </li>`;
+        };
+        return `<section class="act-block">
+          <div class="act-block-h"><span>Parties</span><span class="act-block-h-c">2</span></div>
+          <ul class="edg-party-list">
+            ${renderRow(src, srcLabel, a.fromRoles)}
+            ${renderRow(tgt, tgtLabel, a.toRoles)}
+          </ul>
+        </section>`;
+      }
+
+      function edgResourcesBlock(a) {
+        const res = a.resources || [];
+        if (res.length === 0) return "";
+        const chips = res
+          .map((r) => `<span class="edg-res">${htmlEsc(r)}</span>`)
+          .join("");
+        return `<section class="act-block">
+          <div class="act-block-h"><span>Resources</span><span class="act-block-h-c">${res.length}</span></div>
+          <div class="edg-res-list">${chips}</div>
+        </section>`;
+      }
+
+      // Shared cite-list renderer used by both the edge inspector
+      // (per-edge cites) and the actor inspector (cites aggregated
+      // across an actor's incident edges).
+      //
+      // Contract: each cite is the EvidenceSchema shape from
+      // src/edge-evidence-schema.ts — { id, title, url, date,
+      // evidenceType, tier, isPlaceholder }. Placeholder cites get
+      // a non-clickable rendering with an amber PLACEHOLDER tag so
+      // the editor's flag (TODO.md) is visible at the inspector
+      // surface, not buried in the YAML.
+      function renderCiteList(cites) {
+        if (!cites || cites.length === 0) return "";
+        return `<ul class="cite-list">${cites
+          .map((c) => {
+            const tierCls = ACT_TIER_CLASS[c.tier] || "t-anal";
+            const tierLbl = ACT_TIER_LABEL[c.tier] || htmlEsc(c.tier);
+            // Placeholder rows render as plain spans (no anchor) so
+            // a click can't reach a search results page that the
+            // editor flagged for replacement.
+            const titleNode = c.isPlaceholder
+              ? `<span class="cite-link" title="${htmlEsc(c.url)}">${htmlEsc(c.title)}<span class="cite-flag">PLACEHOLDER</span></span>`
+              : `<a class="cite-link" href="${htmlEsc(c.url)}" target="_blank" rel="noopener noreferrer" title="${htmlEsc(c.url)}">${htmlEsc(c.title)}</a>`;
+            return `<li class="cite ${c.isPlaceholder ? "placeholder" : ""}">
+              <span class="cite-tier ${tierCls}">${tierLbl}</span>
+              ${titleNode}
+              <span class="cite-date">${htmlEsc(c.date)}</span>
+            </li>`;
+          })
+          .join("")}</ul>`;
+      }
+
+      function edgDataQualityBlock(a) {
+        const tiers = a.evidenceTiers || {};
+        const total = a.evidenceCount || 0;
+        if (total === 0) {
+          return `<section class="act-block">
+            <div class="act-block-h"><span>Data quality</span></div>
+            <p class="act-dq-flag">⚠ No evidence rows recorded for this edge.</p>
+          </section>`;
+        }
+        const tierTotal = ACT_TIER_ORDER.reduce((s, k) => s + (tiers[k] || 0), 0);
+        const verifiability =
+          tierTotal > 0 ? (tiers.RegulatedTier || 0) / tierTotal : 0;
+        const segs = ACT_TIER_ORDER.filter((k) => (tiers[k] || 0) > 0)
+          .map((k) => {
+            const pct = ((tiers[k] / tierTotal) * 100).toFixed(0);
+            const cls = ACT_TIER_SEG[k] || "opinion";
+            return `<span class="act-dq-seg ${cls} ${actWidthClass(parseFloat(pct))}">${ACT_TIER_LABEL[k]} ${pct}%</span>`;
+          })
+          .join("");
+        const noteParts = actTierNoteParts(tiers);
+        const reg = tiers.RegulatedTier || 0;
+        const flag =
+          reg === 0
+            ? `<p class="act-dq-flag">⚠ No regulated-tier evidence — flag for filing-trail follow-up.</p>`
+            : "";
+        const citeList = renderCiteList(a.evidence);
+        return `<section class="act-block">
+          <div class="act-block-h"><span>Data quality</span><span class="act-block-h-c">verifiability ${verifiability.toFixed(2)}</span></div>
+          <div class="act-dq-bar">${segs}</div>
+          <p class="act-dq-note"><strong>${total}</strong> evidence row${total === 1 ? "" : "s"} · ${noteParts.join(", ")}.</p>
+          ${flag}
+          ${citeList}
+        </section>`;
+      }
+
+      // FAQ — edge-scoped questions. Inverted pyramid: first answer is
+      // always "what is this edge / why does it exist", because that's
+      // what an analyst asks first when clicking. Subsequent questions
+      // surface views, freshness, and supersession (when modelled).
+      function edgFAQBlock(edgeKey, src, tgt, srcLabel, tgtLabel, a) {
+        const items = [];
+        const cmts = a.commitments || [];
+        const totalMoney = cmts
+          .filter((c) => c.amount != null)
+          .reduce((s, c) => s + c.amount, 0);
+
+        const whatHappened = (() => {
+          if (a.relType === "InitialPublicOffering" && totalMoney > 0) {
+            return `An IPO event on <strong>${htmlEsc(a.effectiveDate || "the effective date")}</strong> raised <strong>${htmlEsc(actMoneyShort(totalMoney))}</strong> across ${cmts.filter((c) => c.amount != null).length} monetary commitment${cmts.filter((c) => c.amount != null).length === 1 ? "" : "s"}.`;
+          }
+          if (totalMoney > 0) {
+            return `A <strong>${htmlEsc(a.relType || "commitment")}</strong> recorded on <strong>${htmlEsc(a.effectiveDate || "an undated entry")}</strong> totaling <strong>${htmlEsc(actMoneyShort(totalMoney))}</strong>.`;
+          }
+          const cap = cmts.find((c) => c.capacityValue != null);
+          if (cap) {
+            return `A <strong>${htmlEsc(a.relType || "commitment")}</strong> reserving <strong>${htmlEsc(`${cap.capacityValue} ${cap.capacityUnit || ""}`.trim())}</strong> of capacity${a.effectiveDate ? `, effective <strong>${htmlEsc(a.effectiveDate)}</strong>` : ""}.`;
+          }
+          return `A <strong>${htmlEsc(a.relType || "relationship")}</strong>${a.effectiveDate ? ` recorded on <strong>${htmlEsc(a.effectiveDate)}</strong>` : ""}, with no priced commitments.`;
+        })();
+        items.push({
+          q: "Why does this edge exist?",
+          a: whatHappened,
+          open: true,
+        });
+
+        const views = (a.views || []).filter((v) => v && v !== "attribution");
+        items.push({
+          q: "Which views does this edge appear in?",
+          a:
+            views.length === 0
+              ? `<span class="act-faq-empty">No view tags assigned.</span>`
+              : `Surfaces in <strong>${views.map((v) => htmlEsc(v)).join("</strong>, <strong>")}</strong>${views.length === 1 ? "" : ""}. Filter the graph by the same view to see siblings.`,
+        });
+
+        if (a.confidence) {
+          const tiers = a.evidenceTiers || {};
+          const reg = tiers.RegulatedTier || 0;
+          const conf = a.confidence;
+          let line;
+          if (conf === "high" && reg > 0) {
+            line = `Confidence is <strong>high</strong>, anchored by <strong>${reg}</strong> regulated filing${reg === 1 ? "" : "s"}. Treat as fact-of-record.`;
+          } else if (conf === "high") {
+            line = `Confidence is <strong>high</strong>, but no regulated-tier filing was recorded. Cross-check before pinning.`;
+          } else if (conf === "medium") {
+            line = `Confidence is <strong>medium</strong>: corroborated by credible press but not by a primary filing.`;
+          } else if (conf === "reported") {
+            line = `Confidence is <strong>reported</strong> — analyst notes or unconfirmed deal terms. Use with caveat.`;
+          } else {
+            line = `Confidence: <strong>${htmlEsc(conf)}</strong>.`;
+          }
+          items.push({ q: "How confident is this edge?", a: line });
+        }
+
+        const faq = items
+          .map(
+            (it) =>
+              `<details class="act-faq" ${it.open ? "open" : ""}><summary>${htmlEsc(it.q)}</summary><p>${it.a}</p></details>`,
+          )
+          .join("");
+        return `<section class="act-block act-faq">
+          <div class="act-block-h"><span>FAQ</span></div>
+          ${faq}
+        </section>`;
+      }
+
+      function inspectEdge(edgeKey) {
+        const a = graph.getEdgeAttributes(edgeKey);
+        const src = graph.source(edgeKey);
+        const tgt = graph.target(edgeKey);
+        const srcLabel = graph.getNodeAttribute(src, "label") || src;
+        const tgtLabel = graph.getNodeAttribute(tgt, "label") || tgt;
+
+        showDynamic();
+        iDyn.classList.remove("i-actor-mode");
+        iDyn.classList.add("i-edge-mode");
+
+        // Static header is hidden via .i-edge-mode; clear any prior content.
+        dynBadge.textContent = "";
+        dynBadge.className = "i-badge";
+        dynTitle.textContent = "";
+        dynSubtitle.textContent = "";
+
+        const flow = edgResolveFlow(a, src, tgt, srcLabel, tgtLabel);
+        const payerLabel = flow ? flow.payer.label : null;
+        const recvLabel = flow ? flow.receiver.label : null;
+
+        dynBody.innerHTML = [
+          edgIdentityBlock(edgeKey, src, tgt, srcLabel, tgtLabel, a),
+          edgHeadlineBlock(a, srcLabel, tgtLabel, payerLabel, recvLabel),
+          edgFlowBlock(a, flow),
+          edgPartiesBlock(src, tgt, srcLabel, tgtLabel, a),
+          edgResourcesBlock(a),
+          edgDataQualityBlock(a),
+          edgFAQBlock(edgeKey, src, tgt, srcLabel, tgtLabel, a),
+        ].join("");
+      }
+
+      // Format $ with B/M suffix.
+      const fmtMoney = (v) =>
+        v >= 1e9
+          ? `$${(v / 1e9).toFixed(2)}B`
+          : v >= 1e6
+            ? `$${(v / 1e6).toFixed(0)}M`
+            : `$${v.toFixed(0)}`;
+
+      // ─────────────────────────────────────────────────────────────
+      //  Actor inspector (financial-analyst lens)
+      //  Inverted-pyramid sections: identity → headline → flows →
+      //  counterparties → data quality → FAQ. Each section reads from
+      //  the in-memory graph; nothing here re-queries the projection.
+      //  htmlEsc lives at the top of the module — both edge and actor
+      //  inspectors share it.
+      // ─────────────────────────────────────────────────────────────
+      const actWidthClass = (pct) =>
+        `act-w-${Math.max(0, Math.min(100, Math.round(pct / 5) * 5))}`;
+
+      const actFmtRevenue = (v) => {
+        if (v == null) return null;
+        if (v >= 1e12) return `$${(v / 1e12).toFixed(2)}T`;
+        if (v >= 1e9) return `$${(v / 1e9).toFixed(1)}B`;
+        if (v >= 1e6) return `$${(v / 1e6).toFixed(0)}M`;
+        return `$${v.toFixed(0)}`;
+      };
+
+      // Build the counterparty list rendered in the inspector. Each row
+      // carries its $ amount (if any), GW capacity (if any), and the
+      // highest-rank source tier across its evidence.
+      //
+      // Money direction is role-based — same rule as the SPARQL pipeline:
+      // an actor with `CapitalProvider` or `Customer` role on the edge is
+      // the payer (direction = "out", money flowing out of this actor).
+      // Everyone else is the receiver. This matches role-resolution in
+      // QUERY_ACTOR_FLOWS so the counterparty arrow agrees with the
+      // pre-computed analytics block exactly — no relType-specific flip.
+      const PAYER_ROLES = new Set(["CapitalProvider", "Customer"]);
+      const actorIsPayer = (roles) => (roles || []).some((r) => PAYER_ROLES.has(r));
+
+      function actCounterparties(nodeKey) {
+        const out = [];
+        const collect = (graphDir) => (edge, eAttrs, src, tgt) => {
+          if (eAttrs.kind === "attribution") return;
+          const cp = graphDir === "out" ? tgt : src;
+          const actorRoles = graphDir === "out" ? eAttrs.fromRoles : eAttrs.toRoles;
+          const direction = actorIsPayer(actorRoles) ? "out" : "in";
+          let amount = null;
+          let capacity = null;
+          let capUnit = null;
+          for (const c of eAttrs.commitments || []) {
+            if (c.amount != null && amount == null) amount = c.amount;
+            if (c.capacityValue != null && capacity == null) {
+              capacity = c.capacityValue;
+              capUnit = c.capacityUnit;
+            }
+          }
+          out.push({
+            edge,
+            direction,
+            counterparty: cp,
+            counterpartyLabel: graph.getNodeAttribute(cp, "label") || cp,
+            relType: eAttrs.relType,
+            status: eAttrs.status,
+            confidence: eAttrs.confidence,
+            views: eAttrs.views || [],
+            primaryView: eAttrs.primaryView,
+            effectiveDate: eAttrs.effectiveDate,
+            amount,
+            capacity,
+            capacityUnit: capUnit,
+            tier: actEdgePrimaryTier(eAttrs.evidenceTiers),
+            evidenceCount: eAttrs.evidenceCount || 0,
+            evidence: eAttrs.evidence || [],
+          });
+        };
+        graph.forEachInEdge(nodeKey, collect("in"));
+        graph.forEachOutEdge(nodeKey, collect("out"));
+
+        out.sort((x, y) => {
+          const xa = x.amount ?? -1;
+          const ya = y.amount ?? -1;
+          if (xa !== ya) return ya - xa;
+          const xc = x.capacity ?? -1;
+          const yc = y.capacity ?? -1;
+          if (xc !== yc) return yc - xc;
+          return x.counterpartyLabel.localeCompare(y.counterpartyLabel);
+        });
+        return out;
+      }
+
+      // Tier rank (lower = more reliable) per the ontology comment on
+      // aie:SourceTier. Used to pick a single "primary tier" badge per
+      // edge — the highest-rank tier across all its evidence.
+      // 7-tier vocabulary post ADR 010 § EVT-001. AnalysisTier (rank 4)
+      // retired and replaced by four siblings (Industry / SellSide / BuySide /
+      // Opinion, ranks 4-7) carrying distinct conflict structures.
+      const ACT_TIER_RANK = {
+        RegulatedTier: 1,
+        CompanyTier: 2,
+        JournalisticTier: 3,
+        IndustryResearchTier: 4,
+        SellSideResearchTier: 5,
+        BuySideResearchTier: 6,
+        OpinionTier: 7,
+      };
+      // `t-{abbrev}` text-color CSS classes (style.css § actor inspector).
+      const ACT_TIER_CLASS = {
+        RegulatedTier: "t-reg",
+        CompanyTier: "t-comp",
+        JournalisticTier: "t-journ",
+        IndustryResearchTier: "t-industry",
+        SellSideResearchTier: "t-sell",
+        BuySideResearchTier: "t-buy",
+        OpinionTier: "t-opinion",
+      };
+      // Short labels for the data-quality bar segments.
+      const ACT_TIER_LABEL = {
+        RegulatedTier: "REG",
+        CompanyTier: "COMP",
+        JournalisticTier: "JOURN",
+        IndustryResearchTier: "INDUSTRY",
+        SellSideResearchTier: "SELL",
+        BuySideResearchTier: "BUY",
+        OpinionTier: "OPINION",
+      };
+      // `act-dq-seg.{abbrev}` background CSS classes.
+      const ACT_TIER_SEG = {
+        RegulatedTier: "reg",
+        CompanyTier: "comp",
+        JournalisticTier: "journ",
+        IndustryResearchTier: "industry",
+        SellSideResearchTier: "sell",
+        BuySideResearchTier: "buy",
+        OpinionTier: "opinion",
+      };
+      // Long labels for the prose note ("3 regulated filings, 1 sell-side, ...").
+      const ACT_TIER_NOTE = {
+        RegulatedTier: { single: "regulated filing", plural: "regulated filings" },
+        CompanyTier: "company",
+        JournalisticTier: "journalistic",
+        IndustryResearchTier: "industry research",
+        SellSideResearchTier: "sell-side",
+        BuySideResearchTier: "buy-side",
+        OpinionTier: "informal commentary",
+      };
+      const ACT_TIER_ORDER = [
+        "RegulatedTier",
+        "CompanyTier",
+        "JournalisticTier",
+        "IndustryResearchTier",
+        "SellSideResearchTier",
+        "BuySideResearchTier",
+        "OpinionTier",
+      ];
+      function actTierNoteParts(tiers) {
+        return ACT_TIER_ORDER.map((k) => {
+          const n = tiers[k] || 0;
+          if (n === 0) return null;
+          const lbl = ACT_TIER_NOTE[k];
+          if (typeof lbl === "string") return `${n} ${lbl}`;
+          return `${n} ${n === 1 ? lbl.single : lbl.plural}`;
+        }).filter(Boolean);
+      }
+
+      function actEdgePrimaryTier(tiers) {
+        if (!tiers) return null;
+        let best = null;
+        let bestRank = 99;
+        for (const k of Object.keys(tiers)) {
+          if (!tiers[k]) continue;
+          const r = ACT_TIER_RANK[k] ?? 99;
+          if (r < bestRank) {
+            bestRank = r;
+            best = k;
+          }
+        }
+        return best;
+      }
+
+      function actIdentityBlock(nodeKey, a) {
+        const types = a.actorTypes || (a.actorType ? [a.actorType] : []);
+        const chips = types
+          .map((t) => {
+            const cls = t === "FrontierModelLab" ? "act-chip frontier" : "act-chip";
+            return `<span class="${cls}">${htmlEsc(t)}</span>`;
+          })
+          .join("");
+        const metaParts = [];
+        if (a.ticker) metaParts.push(`<span>${htmlEsc(a.ticker)}</span>`);
+        if (a.headquarteredIn && a.headquarteredIn.label) {
+          const iso = a.headquarteredIn.isoCode
+            ? ` (${htmlEsc(a.headquarteredIn.isoCode)})`
+            : "";
+          metaParts.push(`<span>${htmlEsc(a.headquarteredIn.label)}${iso}</span>`);
+        }
+        if (a.website) {
+          const cleaned = a.website.replace(/^https?:\/\//, "");
+          metaParts.push(
+            `<span><a href="${htmlEsc(a.website)}" target="_blank" rel="noopener">${htmlEsc(cleaned)}</a></span>`,
+          );
+        }
+        metaParts.push(`<span>${htmlEsc(nodeKey)}</span>`);
+
+        const rev = actFmtRevenue(a.annualRevenueUSD);
+        const revDot = a.annualRevenueConfidence
+          ? `<span class="act-conf-dot ${htmlEsc(a.annualRevenueConfidence)}" title="confidence: ${htmlEsc(a.annualRevenueConfidence)}"></span>`
+          : "";
+
+        return `<div class="act-id">
+          <div class="act-id-types">${chips}</div>
+          <h2 class="act-id-name">${htmlEsc(a.label)}</h2>
+          <p class="act-id-meta">${metaParts.join("")}</p>
+          <dl class="act-id-kpis">
+            <div><dt>Revenue</dt><dd>${rev ? htmlEsc(rev) + revDot : '<span class="act-faq-empty">—</span>'}</dd></div>
+            <div><dt>Deployed</dt><dd id="act-id-out">—</dd></div>
+            <div><dt>Received</dt><dd id="act-id-in">—</dd></div>
+          </dl>
+        </div>`;
+      }
+
+      const actMoneyShort = (v) => fmtMoney(v).replace("$", "$");
+
+      // Resolve concentration.topCounterparty (actor key) → display label.
+      const actLabelOf = (key) =>
+        (key && graph.getNodeAttribute(key, "label")) || key;
+
+      function actHeadlineSentence(analytics, cps) {
+        const { monIn, monOut, capIn, capOut, concentration: c } = analytics;
+        const hasIn = monIn > 0;
+        const hasOut = monOut > 0;
+        if (!hasIn && !hasOut) {
+          if (cps.length === 0) {
+            return `No curated edges. This node is currently isolated in the graph.`;
+          }
+          // No monetary flow, but if energy (GW) flow is non-zero use it
+          // as the headline dimension. Power producers, foundries, and
+          // packaging suppliers without disclosed $ naturally land here.
+          const gwOut = capOut || 0;
+          const gwIn = capIn || 0;
+          if (gwOut > 0 || gwIn > 0) {
+            const counted = (dir) =>
+              cps.filter((cp) => cp.direction === dir && cp.capacity != null).length;
+            if (gwOut > 0 && gwIn === 0) {
+              const n = counted("in");
+              return `<strong>Net energy supplier</strong>: <em>${gwOut.toFixed(2)} GW</em> supplied to ${n} counterpart${n === 1 ? "y" : "ies"}.`;
+            }
+            if (gwIn > 0 && gwOut === 0) {
+              const n = counted("out");
+              return `<strong>Net energy consumer</strong>: <em>${gwIn.toFixed(2)} GW</em> reserved from ${n} counterpart${n === 1 ? "y" : "ies"}.`;
+            }
+            return `Two-way energy flow: <em>${gwIn.toFixed(2)} GW</em> in, <em>${gwOut.toFixed(2)} GW</em> out across ${cps.length} counterparties.`;
+          }
+          return `<strong>${cps.length} edge${cps.length === 1 ? "" : "s"}</strong>, none with disclosed monetary commitments — capacity- or in-kind-only.`;
+        }
+        if (hasOut && !hasIn) {
+          if (c.hhi != null && c.hhi >= 5000) {
+            return `<strong>Net capital deployer</strong> with single-counterparty exposure — <em>${Math.round(c.topShare * 100)}%</em> of priced flows to <strong>${htmlEsc(actLabelOf(c.topCounterparty))}</strong>.`;
+          }
+          return `<strong>Net capital deployer</strong>: <em>${htmlEsc(actMoneyShort(monOut))}</em> across ${c.n} priced counterpart${c.n === 1 ? "y" : "ies"}.`;
+        }
+        if (hasIn && !hasOut) {
+          const investors = cps.filter(
+            (cp) => cp.direction === "in" && cp.amount != null,
+          ).length;
+          return `<strong>Capital recipient</strong>: <em>${htmlEsc(actMoneyShort(monIn))}</em> received across ${investors} investor${investors === 1 ? "" : "s"}.`;
+        }
+        const net = monIn - monOut;
+        const sign = net >= 0 ? "+" : "−";
+        return `Two-way capital flow: <em>${htmlEsc(actMoneyShort(monIn))}</em> in, <em>${htmlEsc(actMoneyShort(monOut))}</em> out — net <strong>${sign}${htmlEsc(actMoneyShort(Math.abs(net)))}</strong>.`;
+      }
+
+      function actHeadlineBlock(analytics, cps) {
+        const sentence = actHeadlineSentence(analytics, cps);
+        const { monIn, monOut, concentration: c } = analytics;
+        const net = monIn - monOut;
+        const netLabel =
+          net === 0 && monIn === 0 && monOut === 0
+            ? "—"
+            : `${net >= 0 ? "+" : "−"}${actMoneyShort(Math.abs(net))}`;
+        const netCls = net > 0 ? "bull" : net < 0 ? "bear" : "";
+        const concVal = c.hhi == null ? "—" : c.hhi.toLocaleString("en-US");
+        const concCls = c.hhi != null && c.hhi >= 2500 ? "bear" : "";
+        return `<section class="act-block">
+          <div class="act-block-h"><span>At a glance</span></div>
+          <p class="act-headline">${sentence}</p>
+          <dl class="act-kpi-row">
+            <div class="act-kpi"><dt>Net flow</dt><dd class="${netCls}">${netLabel}</dd></div>
+            <div class="act-kpi"><dt>Concentration</dt><dd class="${concCls}">${c.hhi == null ? "—" : "HHI " + concVal}</dd></div>
+            <div class="act-kpi"><dt>Edges</dt><dd>${cps.length}</dd></div>
+          </dl>
+        </section>`;
+      }
+
+      function actFlowsBlock(analytics) {
+        const { monIn, monOut } = analytics;
+        if (monIn === 0 && monOut === 0) return "";
+        const max = Math.max(monIn, monOut, 1);
+        const inPct = (monIn / max) * 100;
+        const outPct = (monOut / max) * 100;
+        const net = monIn - monOut;
+        const netLabel = `Net <strong class="${net >= 0 ? "bull" : "bear"}">${net >= 0 ? "+" : "−"}${actMoneyShort(Math.abs(net))}</strong> · ${net > 0 ? "recipient" : net < 0 ? "deployer" : "balanced"}`;
+        const inAmt =
+          monIn === 0
+            ? `<span class="act-flow-amt dim">$0</span>`
+            : `<span class="act-flow-amt">${actMoneyShort(monIn)}</span>`;
+        const outAmt =
+          monOut === 0
+            ? `<span class="act-flow-amt dim">$0</span>`
+            : `<span class="act-flow-amt">${actMoneyShort(monOut)}</span>`;
+        return `<section class="act-block">
+          <div class="act-block-h"><span>Capital flows</span></div>
+          <div class="act-flow">
+            <div class="act-flow-row">
+              <span class="act-flow-lbl">IN</span>
+              <span class="act-flow-track"><span class="act-flow-fill in ${actWidthClass(inPct)}"></span></span>
+              ${inAmt}
+            </div>
+            <div class="act-flow-row">
+              <span class="act-flow-lbl">OUT</span>
+              <span class="act-flow-track"><span class="act-flow-fill out ${actWidthClass(outPct)}"></span></span>
+              ${outAmt}
+            </div>
+          </div>
+          <p class="act-flow-net">${netLabel}</p>
+        </section>`;
+      }
+
+      // Energy-flow peer of actFlowsBlock — same shape, GW dimension.
+      // Energy direction is the inverse of money direction on the same
+      // relationship: a Customer pays money OUT and receives capacity IN;
+      // a Supplier / ComputeProvider receives money IN and sends capacity
+      // OUT. So for the consumer (OpenAI, Anthropic): capIn = GW received.
+      // For the supplier (AWS, Talen, Constellation, IREN): capOut = GW
+      // sent. Values come from analytics.capIn / capOut, precomputed by
+      // Python via QUERY_ACTOR_FLOWS in pipeline/build-views.py and
+      // already normalised to GW (toGW handles MW→GW).
+      function actEnergyBlock(analytics) {
+        const capIn = analytics.capIn || 0;
+        const capOut = analytics.capOut || 0;
+        if (capIn === 0 && capOut === 0) return "";
+        const max = Math.max(capIn, capOut, 1);
+        const inPct = (capIn / max) * 100;
+        const outPct = (capOut / max) * 100;
+        const inAmt =
+          capIn === 0
+            ? `<span class="act-flow-amt dim">0 GW</span>`
+            : `<span class="act-flow-amt">${capIn.toFixed(2)} GW</span>`;
+        const outAmt =
+          capOut === 0
+            ? `<span class="act-flow-amt dim">0 GW</span>`
+            : `<span class="act-flow-amt">${capOut.toFixed(2)} GW</span>`;
+        return `<section class="act-block">
+          <div class="act-block-h"><span>Energy flows</span></div>
+          <div class="act-flow">
+            <div class="act-flow-row">
+              <span class="act-flow-lbl">IN</span>
+              <span class="act-flow-track"><span class="act-flow-fill in ${actWidthClass(inPct)}"></span></span>
+              ${inAmt}
+            </div>
+            <div class="act-flow-row">
+              <span class="act-flow-lbl">OUT</span>
+              <span class="act-flow-track"><span class="act-flow-fill out ${actWidthClass(outPct)}"></span></span>
+              ${outAmt}
+            </div>
+          </div>
+        </section>`;
+      }
+
+      // Group counterparties by money direction. Headings symmetric with
+      // the identity-strip KPIs (Deployed / Received) so the analyst doesn't
+      // re-read direction at each row. The arrow inside each row becomes
+      // redundant once grouped, but we keep it for redundant clarity at row
+      // scale. Subheadings carry a mini-stat (count + subtotal $) so the
+      // group can be weighed against the headline without scanning rows.
+      function actCounterpartiesBlock(cps, concentration) {
+        if (cps.length === 0) return "";
+        // Risk callout fires when a single counterparty owns ≥80% of priced
+        // outflow. concentration.topCounterparty is an actor key; find the
+        // matching priced outgoing row and tag its edge for inline annotation.
+        const dominantKey =
+          concentration.topCounterparty && concentration.topShare >= 0.8
+            ? cps.find(
+                (c) =>
+                  c.direction === "out" &&
+                  c.counterparty === concentration.topCounterparty &&
+                  c.amount != null,
+              )?.edge
+            : null;
+
+        const renderRow = (c) => {
+          const amtCell =
+            c.amount != null
+              ? `<span class="act-cp-amt">${actMoneyShort(c.amount)}</span>`
+              : c.capacity != null
+                ? `<span class="act-cp-amt">${c.capacity} ${htmlEsc(c.capacityUnit || "")}</span>`
+                : `<span class="act-cp-amt dim">—</span>`;
+          const tierCls = c.tier ? ACT_TIER_CLASS[c.tier] : "t-none";
+          const tierLbl = c.tier ? ACT_TIER_LABEL[c.tier] : "∅";
+          const statusPill = c.status
+            ? `<span class="act-cp-pill s-${htmlEsc(c.status)}">${htmlEsc(c.status)}</span>`
+            : "";
+          const datePart = c.effectiveDate
+            ? `<span class="act-cp-date">${htmlEsc(c.effectiveDate)}</span>`
+            : "";
+          const flagPart =
+            c.edge === dominantKey
+              ? `<div class="act-cp-flag">Holds ${Math.round(concentration.topShare * 100)}% of priced outflow — single-counterparty risk.</div>`
+              : "";
+          return `<li class="act-cp" data-edge="${htmlEsc(c.edge)}">
+            <div class="act-cp-head">
+              <span class="act-cp-name">${htmlEsc(c.counterpartyLabel)}</span>
+              ${amtCell}
+            </div>
+            <div class="act-cp-meta">
+              <span class="act-cp-type">${htmlEsc(c.relType)}</span>
+              ${statusPill}
+              <span class="act-cp-pill ${tierCls}">${tierLbl}</span>
+              ${datePart}
+            </div>
+            ${flagPart}
+          </li>`;
+        };
+
+        const out = cps.filter((c) => c.direction === "out");
+        const inn = cps.filter((c) => c.direction === "in");
+        const sumPriced = (rows) => rows.reduce((s, c) => s + (c.amount || 0), 0);
+        const outTotal = sumPriced(out);
+        const inTotal = sumPriced(inn);
+
+        // Each direction is its own act-block sibling. Block-h carries
+        // the count + subtotal that the previous sub-header had.
+        // Top-level Counterparties block is an umbrella summary —
+        // analyst gets the (M outflow, K inflow) split before scrolling.
+        const renderRows = (rows) =>
+          `<ul class="act-cp-list">${rows.map(renderRow).join("")}</ul>`;
+
+        const summary = `Money out: <strong>${out.length}</strong>${outTotal > 0 ? ` · ${actMoneyShort(outTotal)} deployed` : ""}. Money in: <strong>${inn.length}</strong>${inTotal > 0 ? ` · ${actMoneyShort(inTotal)} received` : ""}.`;
+
+        const umbrella = `<section class="act-block">
+          <div class="act-block-h"><span>Counterparties</span><span class="act-block-h-c">${cps.length} · sorted by $</span></div>
+          <p class="act-cp-summary">${summary}</p>
+        </section>`;
+
+        const outBlock =
+          out.length === 0
+            ? ""
+            : `<section class="act-block">
+                <div class="act-block-h"><span><span class="act-cp-arrow">→</span>Money out</span><span class="act-block-h-c">${out.length}${outTotal > 0 ? ` · ${actMoneyShort(outTotal)} deployed` : " · no priced out"}</span></div>
+                ${renderRows(out)}
+              </section>`;
+
+        const inBlock =
+          inn.length === 0
+            ? ""
+            : `<section class="act-block">
+                <div class="act-block-h"><span><span class="act-cp-arrow">←</span>Money in</span><span class="act-block-h-c">${inn.length}${inTotal > 0 ? ` · ${actMoneyShort(inTotal)} received` : " · no priced in"}</span></div>
+                ${renderRows(inn)}
+              </section>`;
+
+        return `${umbrella}${outBlock}${inBlock}`;
+      }
+
+      // Aggregate cites across an actor's incident edges. Dedupe by id —
+      // the same SEC filing can evidence multiple edges (e.g. a 10-K
+      // citing both an investment and a supply agreement). Sort by date
+      // desc so the freshest filing leads.
+      function actAggregateCites(cps) {
+        const seen = new Map();
+        for (const cp of cps) {
+          for (const c of cp.evidence || []) {
+            if (!seen.has(c.id)) seen.set(c.id, c);
+          }
+        }
+        return [...seen.values()].sort((a, b) =>
+          a.date < b.date ? 1 : a.date > b.date ? -1 : 0,
+        );
+      }
+
+      function actDataQualityBlock(analytics, cps) {
+        const { tierMix, tierTotal, verifiability } = analytics;
+        if (tierTotal === 0) return "";
+        const segs = ACT_TIER_ORDER.filter((k) => (tierMix[k] || 0) > 0)
+          .map((k) => {
+            const pct = ((tierMix[k] / tierTotal) * 100).toFixed(0);
+            const cls = ACT_TIER_SEG[k] || "opinion";
+            return `<span class="act-dq-seg ${cls} ${actWidthClass(parseFloat(pct))}">${ACT_TIER_LABEL[k]} ${pct}%</span>`;
+          })
+          .join("");
+        const reg = tierMix.RegulatedTier || 0;
+        const noteParts = actTierNoteParts(tierMix);
+        const flag =
+          reg === 0
+            ? `<p class="act-dq-flag">⚠ No regulated-tier evidence on any incident edge — flag for filing-trail follow-up.</p>`
+            : "";
+        const cites = actAggregateCites(cps || []);
+        const citeBlock =
+          cites.length === 0
+            ? ""
+            : `<details class="act-cites"><summary>${cites.length} unique source${cites.length === 1 ? "" : "s"} — expand</summary>${renderCiteList(cites)}</details>`;
+        return `<section class="act-block">
+          <div class="act-block-h"><span>Data quality</span><span class="act-block-h-c">verifiability ${verifiability.toFixed(2)}</span></div>
+          <div class="act-dq-bar">${segs}</div>
+          <p class="act-dq-note"><strong>${tierTotal}</strong> evidence row${tierTotal === 1 ? "" : "s"} · ${noteParts.join(", ")}.</p>
+          ${flag}
+          ${citeBlock}
+        </section>`;
+      }
+
+      // FAQ — direction-sensitive questions
+      // (capital / cloud / manufacturing) flip based on which direction has
+      // edges: a foundry gets "Who manufactures with X?" instead of "What
+      // does X manufacture with?". Hide both directions when neither has
+      // data — empty answers only earn a slot when the absence is the
+      // insight (e.g., a ModelLab without funders).
+      function actFAQBlock(nodeKey, a, analytics, cps) {
+        const types = a.actorTypes || [];
+        const isFoundry = types.includes("Foundry");
+        const isCloudish = types.some((t) => t === "Cloud" || t === "NeoCloud");
+        const isModelLab = types.includes("ModelLab");
+        const isApplication = types.includes("Application");
+
+        const byCapital = (dir) =>
+          cps.filter(
+            (c) => c.direction === dir && (c.views || []).includes("capital"),
+          );
+        const byCompute = (dir) =>
+          cps.filter(
+            (c) => c.direction === dir && (c.views || []).includes("compute"),
+          );
+        const byMfg = (dir) =>
+          cps.filter(
+            (c) => c.direction === dir && c.relType === "ManufacturingDependency",
+          );
+
+        const inCapital = byCapital("in");
+        const outCapital = byCapital("out");
+        const inCompute = byCompute("in");
+        const outCompute = byCompute("out");
+        const inMfg = byMfg("in");
+        const outMfg = byMfg("out");
+
+        const fmtCpList = (rows, opts = {}) =>
+          rows
+            .map((c) => {
+              const amt =
+                c.amount != null
+                  ? ` (${actMoneyShort(c.amount)})`
+                  : c.capacity != null && opts.includeCapacity
+                    ? ` (${c.capacity} ${c.capacityUnit || ""})`
+                    : "";
+              return `<strong>${htmlEsc(c.counterpartyLabel)}</strong>${amt}`;
+            })
+            .join(", ");
+
+        const fmtMfgList = (rows) =>
+          rows
+            .map((c) => {
+              const hq = graph.getNodeAttribute(c.counterparty, "headquarteredIn");
+              const where = hq && hq.isoCode ? ` (${hq.isoCode})` : "";
+              const amt =
+                c.amount != null
+                  ? ` — ${actMoneyShort(c.amount)}`
+                  : c.capacity != null
+                    ? ` — ${c.capacity} ${c.capacityUnit || ""}`
+                    : "";
+              const dt = c.effectiveDate ? `, ${c.effectiveDate}` : "";
+              return `<strong>${htmlEsc(c.counterpartyLabel)}</strong>${where}${amt}${dt}`;
+            })
+            .join(" · ");
+
+        const items = [];
+
+        // Concentration — universally useful, opens by default.
+        const c = analytics.concentration;
+        items.push({
+          q: "How exposed is this actor to a single counterparty?",
+          a:
+            c.hhi == null
+              ? `<span class="act-faq-empty">No priced out-flow to measure.</span> Concentration is undefined for this node.`
+              : `${c.hhi >= 5000 ? "<strong>Highly exposed.</strong> " : c.hhi >= 2500 ? "<strong>Concentrated.</strong> " : "<strong>Diffuse.</strong> "}HHI ${c.hhi.toLocaleString("en-US")} on ${c.n} priced counterpart${c.n === 1 ? "y" : "ies"} (DOJ "highly concentrated" threshold is 2,500). Largest exposure: <strong>${htmlEsc(actLabelOf(c.topCounterparty))}</strong> at ${Math.round(c.topShare * 100)}%.`,
+          cite: "HHI · priced out-flow",
+          open: true,
+        });
+
+        // Capital — funders (incoming) ↔ portfolio (outgoing). Show whichever
+        // direction has data; surface "absence is the data" only when an
+        // expected-recipient type (ModelLab / Application) has no funders.
+        if (inCapital.length > 0) {
+          items.push({
+            q: `Who funds ${a.label}?`,
+            a: `${inCapital.length} capital provider${inCapital.length === 1 ? "" : "s"}: ${fmtCpList(inCapital)}.`,
+            cite: "CQ-001",
+          });
+        } else if (isModelLab || isApplication) {
+          items.push({
+            q: `Who funds ${a.label}?`,
+            a: `<span class="act-faq-empty">No capital providers in the curated graph.</span> No equity, debt, or JV inflows recorded — absence is the data.`,
+            cite: "CQ-001",
+          });
+        }
+        if (outCapital.length > 0) {
+          items.push({
+            q: `Who does ${a.label} fund?`,
+            a: `${outCapital.length} recipient${outCapital.length === 1 ? "" : "s"}: ${fmtCpList(outCapital)}.`,
+            cite: "outgoing CapitalRelationship edges",
+          });
+        }
+
+        // Manufacturing — direction flips for foundries vs chip-designers.
+        if (outMfg.length > 0) {
+          items.push({
+            q: `What does ${a.label} manufacture with — and where?`,
+            a: fmtMfgList(outMfg),
+            cite: "outgoing ManufacturingDependency",
+          });
+        }
+        if (inMfg.length > 0) {
+          items.push({
+            q: `Who manufactures with ${a.label}?`,
+            a: fmtMfgList(inMfg),
+            cite: "incoming ManufacturingDependency",
+          });
+        } else if (isFoundry) {
+          items.push({
+            q: `Who manufactures with ${a.label}?`,
+            a: `<span class="act-faq-empty">No incoming manufacturing dependencies curated.</span>`,
+            cite: "incoming ManufacturingDependency",
+          });
+        }
+
+        // Cloud — consumers ask "which clouds does X rely on?", providers
+        // ask "who runs compute on X?". Filter by `compute` view so the
+        // question semantics align with the projection's view system.
+        if (outCompute.length > 0) {
+          items.push({
+            q: `Which clouds does ${a.label} rely on for compute?`,
+            a: fmtCpList(outCompute, { includeCapacity: true }),
+            cite: "CQ-003 · scoped",
+          });
+        } else if (isModelLab || isApplication) {
+          items.push({
+            q: `Which clouds does ${a.label} rely on for compute?`,
+            a: `<span class="act-faq-empty">None recorded.</span> No CloudCommitment edges from this actor.`,
+            cite: "CQ-003 · scoped",
+          });
+        }
+        if (inCompute.length > 0) {
+          items.push({
+            q: `Who runs compute on ${a.label}?`,
+            a: fmtCpList(inCompute, { includeCapacity: true }),
+            cite: "incoming compute edges",
+          });
+        } else if (isCloudish) {
+          items.push({
+            q: `Who runs compute on ${a.label}?`,
+            a: `<span class="act-faq-empty">No tenants curated.</span> No incoming CloudCommitment edges.`,
+            cite: "incoming compute edges",
+          });
+        }
+
+        // Network position — degree from graphology, reach2hop from analytics.
+        const totalNodes = graph.order;
+        items.push({
+          q: `How is ${a.label} positioned in the wider network?`,
+          a: `Degree <strong>${analytics.edgeCount}</strong> (${analytics.outEdgeCount} out / ${analytics.inEdgeCount} in) · 2-hop reach <strong>${analytics.reach2hop}</strong> of ${totalNodes - 1} reachable actors.`,
+          cite: "graph metrics",
+        });
+
+        // Provenance summary — read tier mix from analytics directly.
+        const tm = analytics.tierMix;
+        items.push({
+          q: `Where does this data come from?`,
+          a:
+            analytics.tierTotal === 0
+              ? `<span class="act-faq-empty">No evidence rows attached to incident edges.</span>`
+              : `${analytics.tierTotal} evidence row${analytics.tierTotal === 1 ? "" : "s"} — ${Object.entries(
+                  tm,
+                )
+                  .filter(([, n]) => n > 0)
+                  .sort(
+                    ([x], [y]) => (ACT_TIER_RANK[x] || 99) - (ACT_TIER_RANK[y] || 99),
+                  )
+                  .map(([k, n]) => `${n} ${ACT_TIER_LABEL[k]?.toLowerCase() || k}`)
+                  .join(
+                    ", ",
+                  )}. Click any counterparty above to drill into its filing.`,
+          cite: `${analytics.tierTotal} evidence`,
+        });
+
+        const html = items
+          .map(
+            (it) => `<details${it.open ? " open" : ""}>
+            <summary>${htmlEsc(it.q)}</summary>
+            <p>${it.a}<span class="act-faq-cite">${htmlEsc(it.cite)}</span></p>
+          </details>`,
+          )
+          .join("");
+
+        return `<section class="act-block act-faq">
+          <div class="act-block-h"><span>FAQ</span></div>
+          ${html}
+        </section>`;
+      }
+
+      function inspectNode(nodeKey) {
+        const a = graph.getNodeAttributes(nodeKey);
+        showDynamic();
+        iDyn.classList.remove("i-edge-mode");
+        iDyn.classList.add("i-actor-mode");
+
+        // Analytics is precomputed by the Python pipeline (build-views.py)
+        // and validated against AnalyticsSchema (src/analytics-schema.ts) at
+        // build time. The fallback to a zero-shaped object is defensive —
+        // any node missing analytics would already have failed projection
+        // validation in `bun run build`.
+        const analytics = a.analytics || {
+          monIn: 0,
+          monOut: 0,
+          capIn: 0,
+          capOut: 0,
+          edgeCount: 0,
+          inEdgeCount: 0,
+          outEdgeCount: 0,
+          concentration: {
+            hhi: null,
+            topShare: null,
+            topCounterparty: null,
+            n: 0,
+            totalPriced: 0,
+          },
+          tierMix: {
+            RegulatedTier: 0,
+            CompanyTier: 0,
+            JournalisticTier: 0,
+            IndustryResearchTier: 0,
+            SellSideResearchTier: 0,
+            BuySideResearchTier: 0,
+            OpinionTier: 0,
+          },
+          tierTotal: 0,
+          verifiability: 0,
+          reach2hop: 0,
+        };
+        const cps = actCounterparties(nodeKey);
+
+        dynBody.innerHTML = [
+          actIdentityBlock(nodeKey, a),
+          actHeadlineBlock(analytics, cps),
+          actFlowsBlock(analytics),
+          actEnergyBlock(analytics),
+          actCounterpartiesBlock(cps, analytics.concentration),
+          actDataQualityBlock(analytics, cps),
+          actFAQBlock(nodeKey, a, analytics, cps),
+        ]
+          .filter(Boolean)
+          .join("");
+
+        // Identity-block KPI cells fill in after layout — keeps the
+        // identity render synchronous while still reading the precomputed
+        // analytics that the headline block already used above.
+        const out = document.getElementById("act-id-out");
+        const inn = document.getElementById("act-id-in");
+        if (out)
+          out.textContent =
+            analytics.monOut > 0 ? actMoneyShort(analytics.monOut) : "$0";
+        if (inn)
+          inn.textContent =
+            analytics.monIn > 0 ? actMoneyShort(analytics.monIn) : "$0";
+      }
+
+      renderer.on("clickEdge", ({ edge }) => inspectEdge(edge));
+      renderer.on("clickNode", ({ node }) => inspectNode(node));
+
+      // Delegated click handler: edge rows in the actor inspector drill into
+      // the edge inspector; actor links inside the edge inspector drill into
+      // the counterparty actor. Together they enable
+      // actor → edge → counterparty → edge → … navigation in the panel alone.
+      dynBody.addEventListener("click", (ev) => {
+        const edgeRow = ev.target.closest("[data-edge]");
+        if (edgeRow && edgeRow.dataset.edge) {
+          inspectEdge(edgeRow.dataset.edge);
+          return;
+        }
+        const actorLink = ev.target.closest("[data-node]");
+        if (actorLink && actorLink.dataset.node) {
+          inspectNode(actorLink.dataset.node);
+        }
+      });
+      renderer.on("clickStage", () => showEmpty());
+
+      // Hover affordance: brighten edge under cursor
+      let hoveredEdge = null;
+      renderer.on("enterEdge", ({ edge }) => {
+        hoveredEdge = edge;
+        renderer.refresh();
+      });
+      renderer.on("leaveEdge", () => {
+        hoveredEdge = null;
+        renderer.refresh();
+      });
+
+      const baseEdgeReducer = renderer.getSetting("edgeReducer");
+      renderer.setSetting("edgeReducer", (edge, attrs) => {
+        const out = baseEdgeReducer(edge, attrs);
+        if (out.hidden) return out;
+        if (edge === hoveredEdge) return { ...out, size: (out.size || 2.5) * 1.8 };
+        return out;
+      });
+
+      // ── Drag-and-drop with localStorage persistence ───────────────────
+      // Sigma's pattern: capture downNode → drive position via mousemovebody
+      // (with preventSigmaDefault so the camera doesn't pan) → persist on
+      // mouseup. The setCustomBBox call freezes the camera's auto-fit bounds
+      // at drag-start so dragging a node outside the original layout doesn't
+      // suddenly rescale everything else.
+      let draggedNode = null;
+      let isDragging = false;
+
+      renderer.on("downNode", ({ node }) => {
+        isDragging = true;
+        draggedNode = node;
+        graph.setNodeAttribute(node, "highlighted", true);
+        if (!renderer.getCustomBBox()) {
+          renderer.setCustomBBox(renderer.getBBox());
+        }
+        container.classList.add("is-grabbing");
+      });
+
+      renderer.getMouseCaptor().on("mousemovebody", (e) => {
+        if (!isDragging || !draggedNode) return;
+        const pos = renderer.viewportToGraph(e);
+        graph.setNodeAttribute(draggedNode, "x", pos.x);
+        graph.setNodeAttribute(draggedNode, "y", pos.y);
+        e.preventSigmaDefault();
+        e.original.preventDefault();
+        e.original.stopPropagation();
+      });
+
+      const stopDrag = () => {
+        if (draggedNode) {
+          graph.removeNodeAttribute(draggedNode, "highlighted");
+          persistNodePosition(draggedNode);
+        }
+        isDragging = false;
+        draggedNode = null;
+        container.classList.remove("is-grabbing");
+      };
+      renderer.getMouseCaptor().on("mouseup", stopDrag);
+      renderer.getMouseCaptor().on("mouseleave", stopDrag);
+
+      // Cursor affordance: grab on node hover, grabbing while held.
+      renderer.on("enterNode", () => {
+        if (!isDragging) container.classList.add("is-grab");
+      });
+      renderer.on("leaveNode", () => {
+        container.classList.remove("is-grab");
+      });
+
+      // ── Reset button ─────────────────────────────────────────────────
+      // Drops stored positions and re-runs ForceAtlas2 on the in-memory
+      // graph. No reload required; camera stays put.
+      document.getElementById("layout-reset").addEventListener("click", () => {
+        try {
+          localStorage.removeItem(POS_STORAGE_KEY);
+        } catch {
+          /* ignore */
+        }
+        circular.assign(graph);
+        forceAtlas2.assign(graph, {
+          iterations: 400,
+          settings: forceAtlas2.inferSettings(graph),
+        });
+        renderer.setCustomBBox(null);
+        renderer.refresh();
+      });
+
+      // Initial state
+      showEmpty();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,358 @@
+{
+  "actors": {
+    "ai-ethernet": [
+      "Arista Networks"
+    ],
+    "architecture-ip": [
+      "ARM Holdings"
+    ],
+    "coupe-io": [
+      "Broadcom",
+      "Marvell Technology",
+      "NVIDIA",
+      "TSMC"
+    ],
+    "cpo-switch-asic": [
+      "Broadcom",
+      "Marvell Technology",
+      "NVIDIA"
+    ],
+    "custom-asic": [
+      "Amazon",
+      "Broadcom",
+      "Google",
+      "Marvell Technology",
+      "Meta",
+      "NVIDIA"
+    ],
+    "dci": [
+      "Ciena"
+    ],
+    "eda": [
+      "Cadence Design Systems",
+      "Synopsys"
+    ],
+    "fiber": [
+      "Corning"
+    ],
+    "foundry": [
+      "GlobalFoundries",
+      "Intel",
+      "TSMC",
+      "Tower Semiconductor"
+    ],
+    "gpu-cpu": [
+      "AMD",
+      "Intel",
+      "NVIDIA"
+    ],
+    "high-speed-connectivity": [
+      "Astera Labs",
+      "Credo Technology"
+    ],
+    "high-speed-io": [
+      "Astera Labs",
+      "Credo Technology"
+    ],
+    "liquid-cooling": [
+      "DCAirco",
+      "Danfoss",
+      "Eaton",
+      "Modine Manufacturing",
+      "Vertiv"
+    ],
+    "memory-interface-ip": [
+      "Rambus"
+    ],
+    "memory-storage": [
+      "Micron Technology",
+      "Sandisk"
+    ],
+    "optical-ems": [
+      "Fabrinet",
+      "Jabil"
+    ],
+    "optical-modules": [
+      "Applied Optoelectronics",
+      "Coherent Corp",
+      "DustPhotonics",
+      "Enablence Technologies",
+      "Foxconn Interconnect Technology",
+      "Lightwave Logic",
+      "Lumentum",
+      "O-Net Technologies",
+      "POET Technologies",
+      "QD Laser",
+      "Quintessent",
+      "Sivers Semiconductors"
+    ],
+    "packaging-equipment": [
+      "ASML",
+      "Applied Materials",
+      "BE Semiconductor Industries (Besi)",
+      "Camtek",
+      "KLA",
+      "Kulicke & Soffa",
+      "Lam Research",
+      "Onto Innovation"
+    ],
+    "packaging-test": [
+      "ASE Technology",
+      "Aehr Test Systems",
+      "Amkor Technology",
+      "Cohu",
+      "FormFactor",
+      "TSMC",
+      "Teradyne"
+    ],
+    "power-semi": [
+      "Amperesand",
+      "China XD Electric",
+      "DG Matrix",
+      "EPEC Solutions",
+      "LS Electric",
+      "Monolithic Power Systems",
+      "Navitas Semiconductor",
+      "Novos Power",
+      "ON.energy",
+      "Resilient Power Systems",
+      "Wolfspeed"
+    ],
+    "siph-foundry": [
+      "Advanced Micro Foundry",
+      "GlobalFoundries",
+      "TSMC",
+      "X-FAB Silicon Foundries"
+    ],
+    "substrate-pcb": [
+      "TTM Technologies"
+    ]
+  },
+  "concepts": {
+    "ai-ethernet": {
+      "altLabel": "AI Ethernet",
+      "broader": "interconnect-optical",
+      "definition": "Ethernet-based AI networking systems \u2014 switches, fabric platforms, SDN control planes \u2014 that interconnect accelerators within and across clusters (Arista, Cisco).",
+      "notation": null,
+      "prefLabel": "AI Ethernet / Network Systems"
+    },
+    "architecture-ip": {
+      "altLabel": "Architecture / IP",
+      "broader": "compute-memory",
+      "definition": "Licensable processor / architecture IP \u2014 CPU and GPU cores, instruction sets \u2014 supplied to chip designers rather than as finished silicon (ARM, RISC-V).",
+      "notation": null,
+      "prefLabel": "Architecture / IP Licensing"
+    },
+    "compute-memory": {
+      "altLabel": null,
+      "broader": null,
+      "definition": "Functional domain \u2014 the silicon and IP that perform computation and hold working data: merchant GPUs / CPUs, custom accelerators, memory and storage, the architecture and memory-interface IP they integrate, and the on-package / in-rack high-speed I/O that links them.",
+      "notation": "D1",
+      "prefLabel": "Compute & Memory"
+    },
+    "coupe-io": {
+      "altLabel": "COUPE / Optical I/O",
+      "broader": "interconnect-optical",
+      "definition": "Co-packaged optical I/O engines (e.g. TSMC COUPE) that integrate optical interconnect directly with compute silicon for energy-efficient scale-out bandwidth.",
+      "notation": null,
+      "prefLabel": "COUPE / Optical I/O"
+    },
+    "cpo-switch-asic": {
+      "altLabel": "CPO / Switch ASIC",
+      "broader": "interconnect-optical",
+      "definition": "Co-packaged-optics switch silicon and optical DSPs / retimers that drive optical links \u2014 Broadcom Tomahawk photonics, Marvell optical DSP.",
+      "notation": null,
+      "prefLabel": "CPO / Switch ASIC / Optical DSP"
+    },
+    "custom-asic": {
+      "altLabel": "Custom ASIC",
+      "broader": "compute-memory",
+      "definition": "Purpose-built AI accelerators and custom silicon designed for a specific buyer or workload \u2014 hyperscaler TPU / Trainium-class parts and the design houses (Broadcom, Marvell) that co-develop them. Distinct from stack.gpu-cpu (merchant general-purpose accelerators).",
+      "notation": null,
+      "prefLabel": "Custom ASIC / AI Accelerator"
+    },
+    "dci": {
+      "altLabel": "DCI",
+      "broader": "interconnect-optical",
+      "definition": "Long-haul and metro optical transport linking data centers \u2014 coherent DCI systems and transponders (Ciena-class).",
+      "notation": null,
+      "prefLabel": "Data Center Interconnect / DCI"
+    },
+    "design-manufacturing": {
+      "altLabel": null,
+      "broader": null,
+      "definition": "Functional domain \u2014 the design tools and front-end fabrication that bring a chip into existence: EDA software, advanced-node foundry manufacturing, and the capital equipment for wafer processing and advanced packaging. Enablers of compute rather than compute itself.",
+      "notation": "D2",
+      "prefLabel": "Design & Manufacturing"
+    },
+    "eda": {
+      "altLabel": "EDA",
+      "broader": "design-manufacturing",
+      "definition": "Electronic-design-automation tools \u2014 synthesis, place-and-route, verification, simulation \u2014 used to design every chip (Synopsys, Cadence, Siemens EDA).",
+      "notation": null,
+      "prefLabel": "EDA Software"
+    },
+    "fiber": {
+      "altLabel": "Fiber",
+      "broader": "interconnect-optical",
+      "definition": "Optical fiber and cabling \u2014 the passive physical medium for optical interconnect, intra- and inter-data-center (Corning fiber).",
+      "notation": null,
+      "prefLabel": "Fiber / Optical Cable"
+    },
+    "foundry": {
+      "altLabel": "Foundry",
+      "broader": "design-manufacturing",
+      "definition": "Front-end wafer fabrication at advanced process nodes \u2014 TSMC, Samsung Foundry, Intel Foundry. Where compute silicon is physically manufactured.",
+      "notation": null,
+      "prefLabel": "Foundry / Advanced Node Manufacturing"
+    },
+    "gpu-cpu": {
+      "altLabel": "GPU / CPU",
+      "broader": "compute-memory",
+      "definition": "General-purpose merchant AI compute silicon \u2014 data-center GPUs and host CPUs sold to any buyer (NVIDIA, AMD). Distinct from stack.custom-asic (accelerators purpose-built for a single buyer or workload).",
+      "notation": null,
+      "prefLabel": "GPU / CPU"
+    },
+    "high-speed-connectivity": {
+      "altLabel": "High-Speed Connectivity",
+      "broader": "interconnect-optical",
+      "definition": "Connectivity-chip silicon at the scale-out / cluster level \u2014 retimers, active-cable, and fabric-link silicon connecting accelerators across nodes and racks (Credo, MACOM, Semtech, Astera Labs). The cluster-scale counterpart to stack.high-speed-io (the in-node / on-package view); an actor spanning both carries both positions.",
+      "notation": null,
+      "prefLabel": "High-Speed Connectivity Chips"
+    },
+    "high-speed-io": {
+      "altLabel": "High-Speed I/O",
+      "broader": "compute-memory",
+      "definition": "On-package and in-rack data-movement silicon \u2014 SerDes, PCIe / CXL retimers and switches, CXL memory controllers \u2014 that links compute, memory, and peripherals at high bandwidth WITHIN a node or rack (Astera Labs, Credo). The in-rack view of connectivity silicon; its scale-out / cluster-level counterpart is stack.high-speed-connectivity (Interconnect & Optical). An actor whose products span both views carries both positions.",
+      "notation": null,
+      "prefLabel": "High-Speed I/O / SerDes / PCIe / CXL"
+    },
+    "interconnect-optical": {
+      "altLabel": null,
+      "broader": null,
+      "definition": "Functional domain \u2014 the optical and network technology that connects accelerators across nodes and data centers: silicon photonics and co-packaged optics, optical modules and DSPs, scale-out connectivity silicon, AI Ethernet and DCI systems, optical EMS, and fiber.",
+      "notation": "D5",
+      "prefLabel": "Interconnect & Optical"
+    },
+    "liquid-cooling": {
+      "altLabel": "Liquid Cooling",
+      "broader": "power-thermal",
+      "definition": "Thermal management for dense AI racks \u2014 cold plates, CDUs, immersion, heat-rejection \u2014 required once per-rack power exceeds air-cooling limits.",
+      "notation": null,
+      "prefLabel": "Liquid Cooling / Thermal Management"
+    },
+    "memory-interface-ip": {
+      "altLabel": "Memory Interface IP",
+      "broader": "compute-memory",
+      "definition": "Licensable controller / PHY IP for memory interfaces (DDR / LPDDR / HBM) integrated into SoCs. The interface-IP tier feeding memory connectivity; distinct from stack.memory-storage (the memory devices themselves).",
+      "notation": null,
+      "prefLabel": "Memory Interface IP"
+    },
+    "memory-storage": {
+      "altLabel": "Memory / Storage",
+      "broader": "compute-memory",
+      "definition": "Semiconductor memory and storage attached to compute \u2014 DRAM, HBM, NAND, enterprise SSD / HDD. The capacity-and-bandwidth tier feeding the accelerators.",
+      "notation": null,
+      "prefLabel": "Memory / Storage"
+    },
+    "optical-ems": {
+      "altLabel": "Optical EMS",
+      "broader": "interconnect-optical",
+      "definition": "Precision contract manufacturing / EMS for optical and photonic assemblies \u2014 the build-side of the optical-module supply chain.",
+      "notation": null,
+      "prefLabel": "Optical Manufacturing / Precision EMS"
+    },
+    "optical-modules": {
+      "altLabel": "Optical Modules",
+      "broader": "interconnect-optical",
+      "definition": "Pluggable optical transceiver modules and their components (lasers, photodetectors), assembled from photonics and electronics \u2014 Coherent, Lumentum, InnoLight, AOI.",
+      "notation": null,
+      "prefLabel": "Optical Modules / Components"
+    },
+    "packaging-equipment": {
+      "altLabel": "Packaging Equipment",
+      "broader": "design-manufacturing",
+      "definition": "Capital equipment for advanced packaging and 3D integration \u2014 hybrid bonders, thermal-compression bonders, back-end lithography / deposition \u2014 supplied to foundries and OSATs. Grouped with Design & Manufacturing as front-end / capital tooling, distinct from the back-end packaging SERVICE (stack.packaging-test).",
+      "notation": null,
+      "prefLabel": "Advanced Packaging Equipment"
+    },
+    "packaging-substrate": {
+      "altLabel": null,
+      "broader": null,
+      "definition": "Functional domain \u2014 the back-end assembly and carriers that turn finished dies into deployable modules: advanced packaging and final test (CoWoS, fan-out, 3D stacking) plus the IC substrates and high-layer-count PCBs that carry the die to the board.",
+      "notation": "D3",
+      "prefLabel": "Packaging & Substrate"
+    },
+    "packaging-test": {
+      "altLabel": "Packaging Test",
+      "broader": "packaging-substrate",
+      "definition": "Back-end assembly, advanced packaging (CoWoS, fan-out, 3D stacking), and final test \u2014 TSMC in-house packaging plus OSATs (ASE, Amkor). The throughput bottleneck for AI-accelerator output.",
+      "notation": null,
+      "prefLabel": "Advanced Packaging / Semiconductor Test"
+    },
+    "power-semi": {
+      "altLabel": "Power Semi",
+      "broader": "power-thermal",
+      "definition": "Power-conversion semiconductors and modules (SiC / GaN, VRMs, power stages) that deliver and regulate current to accelerators at rack and board level \u2014 Vicor, Power Integrations, Navitas.",
+      "notation": null,
+      "prefLabel": "Power Semiconductors / Power Modules"
+    },
+    "power-thermal": {
+      "altLabel": null,
+      "broader": null,
+      "definition": "Functional domain \u2014 the power delivery and heat removal that keep dense AI racks operating: power-conversion semiconductors and modules (SiC / GaN, VRMs, power stages) and liquid-cooling systems (cold plates, CDUs, immersion). Neither is packaging; both gate deployable rack density.",
+      "notation": "D4",
+      "prefLabel": "Power & Thermal"
+    },
+    "siph-foundry": {
+      "altLabel": "SiPh Foundry",
+      "broader": "interconnect-optical",
+      "definition": "Photonics-capable foundry processes (GlobalFoundries Fotonix, TSMC SiPh, Intel SiPh) that fabricate silicon-photonics ICs \u2014 the SiPh analogue of stack.foundry. Grouped under Interconnect & Optical (not Design & Manufacturing) because its output is exclusively optical interconnect silicon.",
+      "notation": null,
+      "prefLabel": "Silicon Photonics Foundry"
+    },
+    "substrate-pcb": {
+      "altLabel": "Substrate / PCB",
+      "broader": "packaging-substrate",
+      "definition": "IC package substrates (ABF organic, emerging glass-core) and high-layer-count PCBs that carry the die to the board \u2014 Ibiden, Unimicron, Shinko.",
+      "notation": null,
+      "prefLabel": "IC Substrate / PCB / ABF Exposure"
+    },
+    "theme.ai-financing": {
+      "altLabel": null,
+      "broader": null,
+      "definition": "The capital-structure narrative of the AI buildout \u2014 vendor financing, GPU-backed debt, special-purpose vehicles, and circular flows where a supplier funds its own customers (the Burry thesis). An analyst / short narrative, not a tradable basket (no ETF), but graph-native: the project already models VCI, Apollo debt financing, and vendor-financing loops. Membership = an actor materially exposed to or structuring AI vendor / SPV financing.",
+      "notation": null,
+      "prefLabel": "AI Circular-Financing / Bubble-Risk"
+    },
+    "theme.ai-power": {
+      "altLabel": null,
+      "broader": null,
+      "definition": "Electricity generation, grid, and on-site power as the binding constraint on AI data-center buildout \u2014 utilities / IPPs, gas turbines, transformers and switchgear, nuclear / SMR, and the facility-side power & thermal (liquid cooling) hardware that gates deployable rack density. The 2026 consensus-bottleneck theme; ETF: AIPO. Folds the nuclear / SMR and liquid-cooling sub-narratives.",
+      "notation": null,
+      "prefLabel": "AI Power & Electrification"
+    },
+    "theme.photonics": {
+      "altLabel": null,
+      "broader": null,
+      "definition": "Light replaces copper as the high-bandwidth interconnect backbone of AI data centers \u2014 silicon photonics, co-packaged optics, optical transceivers / modules and DSPs, the lasers and III-V materials that feed them, photonics-capable foundries, and optical EMS. Cross-cutting: spans materials makers (AXT, IQE), foundries (GlobalFoundries, X-FAB), laser / component vendors (Coherent, Lumentum, Sivers), and networking / ASIC players (Broadcom, Marvell). Dedicated ETFs: FOTO, LYTE, EUV. Membership = a defensible role in moving data with light, or supplying that stack (THM-004).",
+      "notation": null,
+      "prefLabel": "Photonics / Optical Interconnect"
+    },
+    "theme.physical-ai": {
+      "altLabel": null,
+      "broader": null,
+      "definition": "Embodied AI \u2014 humanoid robots, actuators, sensors, and the edge compute that runs them \u2014 as the next demand wave for AI silicon and an application surface beyond the data center. Record VC funding through 2026; analyst frameworks (Barclays two-wave).",
+      "notation": null,
+      "prefLabel": "Physical AI / Robotics"
+    },
+    "theme.semicap": {
+      "altLabel": null,
+      "broader": null,
+      "definition": "The capital-equipment vendors that enable all AI silicon regardless of who wins at the chip level \u2014 lithography, deposition, etch, metrology, epitaxy, and test (ASML, Applied Materials, Lam Research, KLA, Teradyne, Advantest, Aixtron). The mature picks-and-shovels basket; ETFs: SMH, SOXX.",
+      "notation": null,
+      "prefLabel": "Semicap Picks & Shovels"
+    }
+  },
+  "root": "AI Supply Chain"
+}

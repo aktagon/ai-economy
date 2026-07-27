@@ -1,0 +1,718 @@
+{
+  "actors": {
+    "ai-ethernet": [
+      "Arista Networks",
+      "Centec Networks"
+    ],
+    "architecture-ip": [
+      "ARM Holdings",
+      "VeriSilicon"
+    ],
+    "cmp": [
+      "Applied Materials",
+      "Ebara Corporation",
+      "Hwatsing Technology"
+    ],
+    "coupe-io": [
+      "Broadcom",
+      "Marvell Technology",
+      "NVIDIA",
+      "TSMC"
+    ],
+    "cpo-switch-asic": [
+      "Broadcom",
+      "Marvell Technology",
+      "NVIDIA"
+    ],
+    "custom-asic": [
+      "Alchip Technologies",
+      "Amazon",
+      "Brite Semiconductor",
+      "Broadcom",
+      "Enflame Technology",
+      "Global Unichip Corporation",
+      "Google",
+      "Kunlunxin Technology",
+      "Marvell Technology",
+      "Meta",
+      "NVIDIA",
+      "VeriSilicon"
+    ],
+    "dci": [
+      "Ciena"
+    ],
+    "deposition": [
+      "ASM International",
+      "Advanced Micro-Fabrication Equipment",
+      "Applied Materials",
+      "Kokusai Electric",
+      "Lam Research",
+      "NAURA Technology Group",
+      "Piotech"
+    ],
+    "dry-etch": [
+      "Advanced Micro-Fabrication Equipment",
+      "Lam Research",
+      "NAURA Technology Group",
+      "Tokyo Electron"
+    ],
+    "eda": [
+      "Cadence Design Systems",
+      "Synopsys"
+    ],
+    "fiber": [
+      "Corning"
+    ],
+    "foundry": [
+      "GlobalFoundries",
+      "Hua Hong Semiconductor",
+      "Intel",
+      "Shanghai Huali Microelectronics",
+      "TSMC",
+      "Tower Semiconductor"
+    ],
+    "gpu-cpu": [
+      "AMD",
+      "Biren Technology",
+      "Cambricon",
+      "Hygon Information Technology",
+      "Iluvatar CoreX",
+      "Intel",
+      "MetaX Integrated Circuits",
+      "Moore Threads",
+      "NVIDIA"
+    ],
+    "high-speed-connectivity": [
+      "Astera Labs",
+      "Credo Technology"
+    ],
+    "high-speed-io": [
+      "Astera Labs",
+      "Credo Technology",
+      "Montage Technology"
+    ],
+    "ion-implant": [
+      "Applied Materials",
+      "Axcelis Technologies",
+      "Hwatsing Technology",
+      "NAURA Technology Group",
+      "Wanye Enterprises"
+    ],
+    "liquid-cooling": [
+      "DCAirco",
+      "Danfoss",
+      "Eaton",
+      "Modine Manufacturing",
+      "Vertiv"
+    ],
+    "lithography": [
+      "ASML",
+      "Canon",
+      "Nikon",
+      "Shanghai Micro Electronics Equipment",
+      "SiCarrier Technology"
+    ],
+    "memory-interface-ip": [
+      "Montage Technology",
+      "Rambus"
+    ],
+    "memory-storage": [
+      "ChangXin Memory Technologies",
+      "Micron Technology",
+      "Sandisk",
+      "SwaySure Technology",
+      "Yangtze Memory Technologies"
+    ],
+    "optical-ems": [
+      "Fabrinet",
+      "Jabil"
+    ],
+    "optical-modules": [
+      "Applied Optoelectronics",
+      "Coherent Corp",
+      "DustPhotonics",
+      "Enablence Technologies",
+      "Eoptolink Technology",
+      "Foxconn Interconnect Technology",
+      "Innolight Technology",
+      "Lightwave Logic",
+      "Lumentum",
+      "O-Net Technologies",
+      "POET Technologies",
+      "QD Laser",
+      "Quintessent",
+      "Sivers Semiconductors"
+    ],
+    "packaging-equipment": [
+      "ASML",
+      "Applied Materials",
+      "BE Semiconductor Industries (Besi)",
+      "Camtek",
+      "KLA",
+      "Kulicke & Soffa",
+      "Lam Research",
+      "Onto Innovation"
+    ],
+    "packaging-test": [
+      "ASE Technology",
+      "Aehr Test Systems",
+      "Amkor Technology",
+      "Cohu",
+      "FormFactor",
+      "King Yuan Electronics",
+      "SJ Semiconductor",
+      "TSMC",
+      "Teradyne",
+      "Tianshui Huatian Technology",
+      "V-Test Semiconductor"
+    ],
+    "photoresist-track": [
+      "ACM Research",
+      "Kingsemi",
+      "SCREEN Holdings",
+      "Tokyo Electron"
+    ],
+    "power-semi": [
+      "Amperesand",
+      "China Resources Microelectronics",
+      "China XD Electric",
+      "DG Matrix",
+      "EPEC Solutions",
+      "JoulWatt Technology",
+      "LS Electric",
+      "Monolithic Power Systems",
+      "NCE Power Semiconductor",
+      "Navitas Semiconductor",
+      "Novos Power",
+      "ON.energy",
+      "Resilient Power Systems",
+      "Wolfspeed"
+    ],
+    "process-control": [
+      "Applied Materials",
+      "KLA",
+      "Lasertec",
+      "SiCarrier Technology",
+      "SkyVerse Technology",
+      "Wuhan Jingce Electronic Group"
+    ],
+    "siph-foundry": [
+      "Advanced Micro Foundry",
+      "GlobalFoundries",
+      "TSMC",
+      "X-FAB Silicon Foundries"
+    ],
+    "substrate-pcb": [
+      "Avary Holding",
+      "Dongshan Precision",
+      "Fastprint Circuit Tech",
+      "Kinsus Interconnect Technology",
+      "Shengyi Technology",
+      "Shennan Circuits",
+      "TTM Technologies",
+      "Victory Giant Technology",
+      "Wus Printed Circuit"
+    ],
+    "thermal-process": [
+      "ACM Research",
+      "Applied Materials",
+      "Kokusai Electric",
+      "NAURA Technology Group",
+      "Tokyo Electron"
+    ],
+    "wafer-cleaning": [
+      "ACM Research",
+      "Lam Research",
+      "NAURA Technology Group",
+      "PNC Process Systems",
+      "SCREEN Holdings",
+      "Tokyo Electron"
+    ]
+  },
+  "concepts": {
+    "ai-ethernet": {
+      "altLabel": "AI Ethernet",
+      "broader": "interconnect-optical",
+      "definition": "Ethernet-based AI networking systems \u2014 switches, fabric platforms, SDN control planes \u2014 that interconnect accelerators within and across clusters (Arista, Cisco).",
+      "notation": null,
+      "prefLabel": "AI Ethernet / Network Systems"
+    },
+    "architecture-ip": {
+      "altLabel": "Architecture / IP",
+      "broader": "compute-memory",
+      "definition": "Licensable processor / architecture IP \u2014 CPU and GPU cores, instruction sets \u2014 supplied to chip designers rather than as finished silicon (ARM, RISC-V).",
+      "notation": null,
+      "prefLabel": "Architecture / IP Licensing"
+    },
+    "cmp": {
+      "altLabel": "Chemical Mechanical Planarization",
+      "broader": "wafer-fab-equipment",
+      "definition": "Chemical mechanical planarization \u2014 polishing the wafer flat between layers so lithography retains depth of focus. Step count scales with interconnect layers and with hybrid bonding in advanced packaging (Applied Materials, Ebara; Hwatsing domestically).",
+      "notation": null,
+      "prefLabel": "CMP"
+    },
+    "compute-memory": {
+      "altLabel": null,
+      "broader": null,
+      "definition": "Functional domain \u2014 the silicon and IP that perform computation and hold working data: merchant GPUs / CPUs, custom accelerators, memory and storage, the architecture and memory-interface IP they integrate, and the on-package / in-rack high-speed I/O that links them.",
+      "notation": "D1",
+      "prefLabel": "Compute & Memory"
+    },
+    "coupe-io": {
+      "altLabel": "COUPE / Optical I/O",
+      "broader": "interconnect-optical",
+      "definition": "Co-packaged optical I/O engines (e.g. TSMC COUPE) that integrate optical interconnect directly with compute silicon for energy-efficient scale-out bandwidth.",
+      "notation": null,
+      "prefLabel": "COUPE / Optical I/O"
+    },
+    "cpo-switch-asic": {
+      "altLabel": "CPO / Switch ASIC",
+      "broader": "interconnect-optical",
+      "definition": "Co-packaged-optics switch silicon and optical DSPs / retimers that drive optical links \u2014 Broadcom Tomahawk photonics, Marvell optical DSP.",
+      "notation": null,
+      "prefLabel": "CPO / Switch ASIC / Optical DSP"
+    },
+    "custom-asic": {
+      "altLabel": "Custom ASIC",
+      "broader": "compute-memory",
+      "definition": "Purpose-built AI accelerators and custom silicon designed for a specific buyer or workload \u2014 hyperscaler TPU / Trainium-class parts and the design houses (Broadcom, Marvell) that co-develop them. Distinct from stack.gpu-cpu (merchant general-purpose accelerators).",
+      "notation": null,
+      "prefLabel": "Custom ASIC / AI Accelerator"
+    },
+    "dci": {
+      "altLabel": "DCI",
+      "broader": "interconnect-optical",
+      "definition": "Long-haul and metro optical transport linking data centers \u2014 coherent DCI systems and transponders (Ciena-class).",
+      "notation": null,
+      "prefLabel": "Data Center Interconnect / DCI"
+    },
+    "deposition": {
+      "altLabel": "Depo",
+      "broader": "wafer-fab-equipment",
+      "definition": "Thin-film addition \u2014 CVD, PVD, ALD and epitaxy \u2014 laying down the conductor, dielectric and barrier layers a device is built from. ALD share rises with each node as films thin toward atomic scale (Applied Materials, Lam Research, ASM International, Kokusai; Piotech and NAURA domestically).",
+      "notation": null,
+      "prefLabel": "Deposition"
+    },
+    "design-manufacturing": {
+      "altLabel": null,
+      "broader": null,
+      "definition": "Functional domain \u2014 the design tools and front-end fabrication that bring a chip into existence: EDA software, advanced-node foundry manufacturing, and the capital equipment for wafer processing and advanced packaging. Enablers of compute rather than compute itself.",
+      "notation": "D2",
+      "prefLabel": "Design & Manufacturing"
+    },
+    "dry-etch": {
+      "altLabel": "Etch",
+      "broader": "wafer-fab-equipment",
+      "definition": "Plasma etch systems that selectively remove material to transfer the patterned mask into the underlying film \u2014 conductor, dielectric and high-aspect-ratio etch. Step count scales with 3D structures (3D NAND, GAA), making it the largest WFE segment after lithography (Lam Research, TEL, Applied Materials; NAURA and AMEC domestically).",
+      "notation": null,
+      "prefLabel": "Dry Etch"
+    },
+    "eda": {
+      "altLabel": "EDA",
+      "broader": "design-manufacturing",
+      "definition": "Electronic-design-automation tools \u2014 synthesis, place-and-route, verification, simulation \u2014 used to design every chip (Synopsys, Cadence, Siemens EDA).",
+      "notation": null,
+      "prefLabel": "EDA Software"
+    },
+    "fiber": {
+      "altLabel": "Fiber",
+      "broader": "interconnect-optical",
+      "definition": "Optical fiber and cabling \u2014 the passive physical medium for optical interconnect, intra- and inter-data-center (Corning fiber).",
+      "notation": null,
+      "prefLabel": "Fiber / Optical Cable"
+    },
+    "foundry": {
+      "altLabel": "Foundry",
+      "broader": "design-manufacturing",
+      "definition": "Front-end wafer fabrication at advanced process nodes \u2014 TSMC, Samsung Foundry, Intel Foundry. Where compute silicon is physically manufactured.",
+      "notation": null,
+      "prefLabel": "Foundry / Advanced Node Manufacturing"
+    },
+    "gpu-cpu": {
+      "altLabel": "GPU / CPU",
+      "broader": "compute-memory",
+      "definition": "General-purpose merchant AI compute silicon \u2014 data-center GPUs and host CPUs sold to any buyer (NVIDIA, AMD). Distinct from stack.custom-asic (accelerators purpose-built for a single buyer or workload).",
+      "notation": null,
+      "prefLabel": "GPU / CPU"
+    },
+    "high-speed-connectivity": {
+      "altLabel": "High-Speed Connectivity",
+      "broader": "interconnect-optical",
+      "definition": "Connectivity-chip silicon at the scale-out / cluster level \u2014 retimers, active-cable, and fabric-link silicon connecting accelerators across nodes and racks (Credo, MACOM, Semtech, Astera Labs). The cluster-scale counterpart to stack.high-speed-io (the in-node / on-package view); an actor spanning both carries both positions.",
+      "notation": null,
+      "prefLabel": "High-Speed Connectivity Chips"
+    },
+    "high-speed-io": {
+      "altLabel": "High-Speed I/O",
+      "broader": "compute-memory",
+      "definition": "On-package and in-rack data-movement silicon \u2014 SerDes, PCIe / CXL retimers and switches, CXL memory controllers \u2014 that links compute, memory, and peripherals at high bandwidth WITHIN a node or rack (Astera Labs, Credo). The in-rack view of connectivity silicon; its scale-out / cluster-level counterpart is stack.high-speed-connectivity (Interconnect & Optical). An actor whose products span both views carries both positions.",
+      "notation": null,
+      "prefLabel": "High-Speed I/O / SerDes / PCIe / CXL"
+    },
+    "interconnect-optical": {
+      "altLabel": null,
+      "broader": null,
+      "definition": "Functional domain \u2014 the optical and network technology that connects accelerators across nodes and data centers: silicon photonics and co-packaged optics, optical modules and DSPs, scale-out connectivity silicon, AI Ethernet and DCI systems, optical EMS, and fiber.",
+      "notation": "D5",
+      "prefLabel": "Interconnect & Optical"
+    },
+    "ion-implant": {
+      "altLabel": "Implant",
+      "broader": "wafer-fab-equipment",
+      "definition": "Dopant introduction \u2014 high-current, high-energy and medium-current implanters that set device electrical characteristics. A concentrated segment with few credible suppliers (Applied Materials, Axcelis; Wanye, NAURA and Hwatsing domestically).",
+      "notation": null,
+      "prefLabel": "Ion Implantation"
+    },
+    "liquid-cooling": {
+      "altLabel": "Liquid Cooling",
+      "broader": "power-thermal",
+      "definition": "Thermal management for dense AI racks \u2014 cold plates, CDUs, immersion, heat-rejection \u2014 required once per-rack power exceeds air-cooling limits.",
+      "notation": null,
+      "prefLabel": "Liquid Cooling / Thermal Management"
+    },
+    "lithography": {
+      "altLabel": "Litho",
+      "broader": "wafer-fab-equipment",
+      "definition": "Wafer patterning scanners and steppers \u2014 EUV, immersion and dry DUV, i-line \u2014 that project circuit patterns onto photoresist. The step that gates leading-edge node access and the tightest export-control chokepoint in the stack (ASML, Canon, Nikon; SMEE and SiCarrier domestically in China).",
+      "notation": null,
+      "prefLabel": "Lithography"
+    },
+    "memory-interface-ip": {
+      "altLabel": "Memory Interface IP",
+      "broader": "compute-memory",
+      "definition": "Licensable controller / PHY IP for memory interfaces (DDR / LPDDR / HBM) integrated into SoCs. The interface-IP tier feeding memory connectivity; distinct from stack.memory-storage (the memory devices themselves).",
+      "notation": null,
+      "prefLabel": "Memory Interface IP"
+    },
+    "memory-storage": {
+      "altLabel": "Memory / Storage",
+      "broader": "compute-memory",
+      "definition": "Semiconductor memory and storage attached to compute \u2014 DRAM, HBM, NAND, enterprise SSD / HDD. The capacity-and-bandwidth tier feeding the accelerators.",
+      "notation": null,
+      "prefLabel": "Memory / Storage"
+    },
+    "optical-ems": {
+      "altLabel": "Optical EMS",
+      "broader": "interconnect-optical",
+      "definition": "Precision contract manufacturing / EMS for optical and photonic assemblies \u2014 the build-side of the optical-module supply chain.",
+      "notation": null,
+      "prefLabel": "Optical Manufacturing / Precision EMS"
+    },
+    "optical-modules": {
+      "altLabel": "Optical Modules",
+      "broader": "interconnect-optical",
+      "definition": "Pluggable optical transceiver modules and their components (lasers, photodetectors), assembled from photonics and electronics \u2014 Coherent, Lumentum, InnoLight, AOI.",
+      "notation": null,
+      "prefLabel": "Optical Modules / Components"
+    },
+    "packaging-equipment": {
+      "altLabel": "Packaging Equipment",
+      "broader": "design-manufacturing",
+      "definition": "Capital equipment for advanced packaging and 3D integration \u2014 hybrid bonders, thermal-compression bonders, back-end lithography / deposition \u2014 supplied to foundries and OSATs. Grouped with Design & Manufacturing as front-end / capital tooling, distinct from the back-end packaging SERVICE (stack.packaging-test).",
+      "notation": null,
+      "prefLabel": "Advanced Packaging Equipment"
+    },
+    "packaging-substrate": {
+      "altLabel": null,
+      "broader": null,
+      "definition": "Functional domain \u2014 the back-end assembly and carriers that turn finished dies into deployable modules: advanced packaging and final test (CoWoS, fan-out, 3D stacking) plus the IC substrates and high-layer-count PCBs that carry the die to the board.",
+      "notation": "D3",
+      "prefLabel": "Packaging & Substrate"
+    },
+    "packaging-test": {
+      "altLabel": "Packaging Test",
+      "broader": "packaging-substrate",
+      "definition": "Back-end assembly, advanced packaging (CoWoS, fan-out, 3D stacking), and final test \u2014 TSMC in-house packaging plus OSATs (ASE, Amkor). The throughput bottleneck for AI-accelerator output.",
+      "notation": null,
+      "prefLabel": "Advanced Packaging / Semiconductor Test"
+    },
+    "photoresist-track": {
+      "altLabel": "Track",
+      "broader": "wafer-fab-equipment",
+      "definition": "Coater-developer tracks that apply, bake and develop photoresist, clustered with the lithography scanner they feed. A near-monopoly step (TEL holds the overwhelming majority share; SCREEN and, domestically, Kingssemi are the alternatives). Distinct from the resist chemistry itself, which is aie:ChemicalSupplier territory (JSR, TOK, Shin-Etsu).",
+      "notation": null,
+      "prefLabel": "Photoresist Track / Coater-Developer"
+    },
+    "power-semi": {
+      "altLabel": "Power Semi",
+      "broader": "power-thermal",
+      "definition": "Power-conversion semiconductors and modules (SiC / GaN, VRMs, power stages) that deliver and regulate current to accelerators at rack and board level \u2014 Vicor, Power Integrations, Navitas.",
+      "notation": null,
+      "prefLabel": "Power Semiconductors / Power Modules"
+    },
+    "power-thermal": {
+      "altLabel": null,
+      "broader": null,
+      "definition": "Functional domain \u2014 the power delivery and heat removal that keep dense AI racks operating: power-conversion semiconductors and modules (SiC / GaN, VRMs, power stages) and liquid-cooling systems (cold plates, CDUs, immersion). Neither is packaging; both gate deployable rack density.",
+      "notation": "D4",
+      "prefLabel": "Power & Thermal"
+    },
+    "process-control": {
+      "altLabel": "Process Control",
+      "broader": "wafer-fab-equipment",
+      "definition": "Metrology and inspection that measure and gate every other step \u2014 overlay and CD metrology, wafer and mask defect inspection, e-beam review. Yield-learning infrastructure rather than a transformation step, but conventionally counted inside WFE (KLA, Applied Materials, Lasertec; SkyVerse, Jingce and SiCarrier domestically).",
+      "notation": null,
+      "prefLabel": "Process Control / Metrology & Inspection"
+    },
+    "seg.ai-infrastructure": {
+      "altLabel": null,
+      "broader": null,
+      "definition": "Datacenter AI silicon and the memory and interconnect around it \u2014 merchant accelerators, custom-ASIC design services, connectivity chips, and DRAM / HBM.",
+      "notation": "S1",
+      "prefLabel": "AI Infrastructure"
+    },
+    "seg.autonomous-driving": {
+      "altLabel": null,
+      "broader": "seg.edge-ai",
+      "definition": "Automotive AI compute for perception and driving policy. Source members: NVIDIA, Qualcomm, Mobileye, TI; Horizon Robotics, Black Sesame and HiSilicon domestically.",
+      "notation": null,
+      "prefLabel": "Autonomous Driving"
+    },
+    "seg.back-end-equipment": {
+      "altLabel": null,
+      "broader": null,
+      "definition": "Test and assembly tooling \u2014 testers, handlers, probers. Category and taggable concept at once. Deliberately NOT aligned to aie:stack.packaging-equipment, which means bonders and back-end litho; the disagreement is preserved rather than resolved (ADR 027 \u00a7 SEG-003).",
+      "notation": "S5",
+      "prefLabel": "Back-End Equipment"
+    },
+    "seg.cleaning": {
+      "altLabel": null,
+      "broader": "seg.wafer-fab-equipment",
+      "definition": "Wafer surface preparation and contamination removal. Source members: SCREEN, Lam Research, TEL; ACM Research, NAURA and PNC Process domestically.",
+      "notation": null,
+      "prefLabel": "Cleaning"
+    },
+    "seg.cmp": {
+      "altLabel": null,
+      "broader": "seg.wafer-fab-equipment",
+      "definition": "Chemical mechanical planarization. Source members: Applied Materials, Ebara; Hwatsing domestically.",
+      "notation": null,
+      "prefLabel": "CMP"
+    },
+    "seg.connectivity": {
+      "altLabel": null,
+      "broader": "seg.ai-infrastructure",
+      "definition": "Data-movement silicon inside and between racks. The clearest case where the source's boundary differs from this project's: aie:StackTaxonomy splits the same companies across stack.high-speed-io (in-rack) and stack.high-speed-connectivity (cluster-scale), so the mapping is one-to-many (ADR 027 \u00a7 SEG-003).",
+      "notation": null,
+      "prefLabel": "Connectivity"
+    },
+    "seg.deposition": {
+      "altLabel": null,
+      "broader": "seg.wafer-fab-equipment",
+      "definition": "Thin-film deposition \u2014 CVD, PVD, ALD, epitaxy. Source members: Applied Materials, Lam Research, ASM International, Kokusai; Piotech and NAURA domestically.",
+      "notation": null,
+      "prefLabel": "Deposition"
+    },
+    "seg.design-service": {
+      "altLabel": null,
+      "broader": "seg.ai-infrastructure",
+      "definition": "Custom-ASIC design houses and design-service providers that co-develop silicon for a named buyer \u2014 Broadcom, Marvell, MediaTek, Alchip, GUC; VeriSilicon and Brite domestically.",
+      "notation": null,
+      "prefLabel": "Design Service Provider"
+    },
+    "seg.dram-hbm": {
+      "altLabel": null,
+      "broader": "seg.ai-infrastructure",
+      "definition": "Datacenter memory \u2014 DRAM and high-bandwidth memory. Source members: Samsung, SK Hynix, Micron; CXMT, YMTC and SwaySure domestically.",
+      "notation": null,
+      "prefLabel": "DRAM / HBM"
+    },
+    "seg.dry-etch": {
+      "altLabel": null,
+      "broader": "seg.wafer-fab-equipment",
+      "definition": "Plasma etch systems. Source members: Lam Research, TEL, Applied Materials; NAURA and AMEC domestically.",
+      "notation": null,
+      "prefLabel": "Dry Etch"
+    },
+    "seg.edge-ai": {
+      "altLabel": null,
+      "broader": null,
+      "definition": "AI silicon outside the datacenter \u2014 smartphone SoCs, autonomous-driving compute, and smart-cockpit processors. Has no aie:StackTaxonomy counterpart by design: edge silicon is not part of the AI datacenter hardware stack, so these actors carry a segment and a type but no stack position (ADR 027 Open Question 3).",
+      "notation": "S8",
+      "prefLabel": "Edge AI"
+    },
+    "seg.foundry": {
+      "altLabel": null,
+      "broader": null,
+      "definition": "Leading-edge contract wafer manufacturing. Category and taggable concept at once \u2014 the source carries no subcategory beneath it.",
+      "notation": "S3",
+      "prefLabel": "Foundry / Wafer Manufacturing \u2014 Advanced Nodes"
+    },
+    "seg.gpu-accelerator": {
+      "altLabel": null,
+      "broader": "seg.ai-infrastructure",
+      "definition": "Merchant datacenter AI compute silicon. Source members span NVIDIA and AMD against the full domestic Chinese cohort \u2014 Cambricon, Hygon, Moore Threads, Biren, MetaX, Iluvatar, Enflame, and the captive designs (HiSilicon, T-Head, Kunlunxin).",
+      "notation": null,
+      "prefLabel": "GPU / AI Accelerator"
+    },
+    "seg.hardware-components": {
+      "altLabel": null,
+      "broader": null,
+      "definition": "Board- and system-level content around the accelerator \u2014 optical modules, PCB and IC substrate, and power ICs and modules.",
+      "notation": "S6",
+      "prefLabel": "Hardware Components"
+    },
+    "seg.hyperscalers": {
+      "altLabel": null,
+      "broader": null,
+      "definition": "The cloud and platform buyers whose capex drives the rest of the landscape. Category and taggable concept at once. The demand side of the segmentation \u2014 these actors carry no aie:hasStackPosition, since they consume the stack rather than occupy a position in it.",
+      "notation": "S7",
+      "prefLabel": "Hyperscalers"
+    },
+    "seg.ion-implant": {
+      "altLabel": null,
+      "broader": "seg.wafer-fab-equipment",
+      "definition": "Dopant implantation systems. Source members: Applied Materials, Axcelis; Wanye, NAURA and Hwatsing domestically.",
+      "notation": null,
+      "prefLabel": "Ion Implant"
+    },
+    "seg.lithography": {
+      "altLabel": null,
+      "broader": "seg.wafer-fab-equipment",
+      "definition": "Wafer patterning scanners and steppers. Source members: ASML, Canon, Nikon; SMEE and SiCarrier domestically.",
+      "notation": null,
+      "prefLabel": "Lithography"
+    },
+    "seg.optics-connectivity": {
+      "altLabel": null,
+      "broader": "seg.hardware-components",
+      "definition": "Optical modules and components. Source members: Coherent, Lumentum; Innolight and Eoptolink domestically.",
+      "notation": null,
+      "prefLabel": "Optics / Connectivity"
+    },
+    "seg.osat": {
+      "altLabel": null,
+      "broader": null,
+      "definition": "Outsourced assembly, packaging and test services. Category and taggable concept at once. Note the source places TSMC and Intel here as well as under Foundry \u2014 a company can hold both.",
+      "notation": "S4",
+      "prefLabel": "OSAT / Advanced Packaging"
+    },
+    "seg.pcb-substrate": {
+      "altLabel": null,
+      "broader": "seg.hardware-components",
+      "definition": "Printed circuit boards and IC substrates. Source members: Ibiden, Unimicron, Kinsus; Shengyi, Shennan, FastPrint, Dongshan, Wus, Victory Giant and Avary domestically \u2014 the largest single-segment domestic cohort in the source.",
+      "notation": null,
+      "prefLabel": "PCB / Substrate"
+    },
+    "seg.photoresist-processing": {
+      "altLabel": null,
+      "broader": "seg.wafer-fab-equipment",
+      "definition": "Coater-developer tracks feeding the lithography cell. Source members: TEL; Kingssemi and ACM Research domestically.",
+      "notation": null,
+      "prefLabel": "Photoresist Processing"
+    },
+    "seg.power-ic": {
+      "altLabel": null,
+      "broader": "seg.hardware-components",
+      "definition": "Power management ICs and power modules feeding the rack. Source members: MPS, TI, Renesas, Infineon, Delta; JoulWatt, NCE Power, CR Micro and Megmeet domestically.",
+      "notation": null,
+      "prefLabel": "Power IC / Module"
+    },
+    "seg.process-control": {
+      "altLabel": null,
+      "broader": "seg.wafer-fab-equipment",
+      "definition": "Metrology and defect inspection. Source members: KLA, Applied Materials, Lasertec; SiCarrier, SkyVerse and Jingce domestically.",
+      "notation": null,
+      "prefLabel": "Process Control"
+    },
+    "seg.smart-cockpit": {
+      "altLabel": null,
+      "broader": "seg.edge-ai",
+      "definition": "In-cabin infotainment and cockpit-domain processors. Source members: Qualcomm, MediaTek; Rockchip, AutoChips, Black Sesame and Amlogic domestically.",
+      "notation": null,
+      "prefLabel": "Smart Cockpit"
+    },
+    "seg.smartphone-soc": {
+      "altLabel": null,
+      "broader": "seg.edge-ai",
+      "definition": "Application processors with on-device AI acceleration. Source members: Qualcomm, MediaTek, Apple, Samsung; HiSilicon and UNISOC domestically.",
+      "notation": null,
+      "prefLabel": "Smartphone SoC"
+    },
+    "seg.thermal-process": {
+      "altLabel": null,
+      "broader": "seg.wafer-fab-equipment",
+      "definition": "Furnace, RTP and anneal systems. Source members: Applied Materials, TEL, Kokusai; NAURA and ACM Research domestically.",
+      "notation": null,
+      "prefLabel": "Thermal Process"
+    },
+    "seg.wafer-fab-equipment": {
+      "altLabel": null,
+      "broader": null,
+      "definition": "Front-end process tooling, decomposed by step. Boundary-compatible with the aie:StackTaxonomy D6 domain added alongside it (ADR 027 \u00a7 SEG-004), but tracked separately: the stack leaves are this project's own model and may diverge as other sources are landed.",
+      "notation": "S2",
+      "prefLabel": "Wafer Fab Equipment"
+    },
+    "siph-foundry": {
+      "altLabel": "SiPh Foundry",
+      "broader": "interconnect-optical",
+      "definition": "Photonics-capable foundry processes (GlobalFoundries Fotonix, TSMC SiPh, Intel SiPh) that fabricate silicon-photonics ICs \u2014 the SiPh analogue of stack.foundry. Grouped under Interconnect & Optical (not Design & Manufacturing) because its output is exclusively optical interconnect silicon.",
+      "notation": null,
+      "prefLabel": "Silicon Photonics Foundry"
+    },
+    "substrate-pcb": {
+      "altLabel": "Substrate / PCB",
+      "broader": "packaging-substrate",
+      "definition": "IC package substrates (ABF organic, emerging glass-core) and high-layer-count PCBs that carry the die to the board \u2014 Ibiden, Unimicron, Shinko.",
+      "notation": null,
+      "prefLabel": "IC Substrate / PCB / ABF Exposure"
+    },
+    "theme.ai-financing": {
+      "altLabel": null,
+      "broader": null,
+      "definition": "The capital-structure narrative of the AI buildout \u2014 vendor financing, GPU-backed debt, special-purpose vehicles, and circular flows where a supplier funds its own customers (the Burry thesis). An analyst / short narrative, not a tradable basket (no ETF), but graph-native: the project already models VCI, Apollo debt financing, and vendor-financing loops. Membership = an actor materially exposed to or structuring AI vendor / SPV financing.",
+      "notation": null,
+      "prefLabel": "AI Circular-Financing / Bubble-Risk"
+    },
+    "theme.ai-power": {
+      "altLabel": null,
+      "broader": null,
+      "definition": "Electricity generation, grid, and on-site power as the binding constraint on AI data-center buildout \u2014 utilities / IPPs, gas turbines, transformers and switchgear, nuclear / SMR, and the facility-side power & thermal (liquid cooling) hardware that gates deployable rack density. The 2026 consensus-bottleneck theme; ETF: AIPO. Folds the nuclear / SMR and liquid-cooling sub-narratives.",
+      "notation": null,
+      "prefLabel": "AI Power & Electrification"
+    },
+    "theme.photonics": {
+      "altLabel": null,
+      "broader": null,
+      "definition": "Light replaces copper as the high-bandwidth interconnect backbone of AI data centers \u2014 silicon photonics, co-packaged optics, optical transceivers / modules and DSPs, the lasers and III-V materials that feed them, photonics-capable foundries, and optical EMS. Cross-cutting: spans materials makers (AXT, IQE), foundries (GlobalFoundries, X-FAB), laser / component vendors (Coherent, Lumentum, Sivers), and networking / ASIC players (Broadcom, Marvell). Dedicated ETFs: FOTO, LYTE, EUV. Membership = a defensible role in moving data with light, or supplying that stack (THM-004).",
+      "notation": null,
+      "prefLabel": "Photonics / Optical Interconnect"
+    },
+    "theme.physical-ai": {
+      "altLabel": null,
+      "broader": null,
+      "definition": "Embodied AI \u2014 humanoid robots, actuators, sensors, and the edge compute that runs them \u2014 as the next demand wave for AI silicon and an application surface beyond the data center. Record VC funding through 2026; analyst frameworks (Barclays two-wave).",
+      "notation": null,
+      "prefLabel": "Physical AI / Robotics"
+    },
+    "theme.semicap": {
+      "altLabel": null,
+      "broader": null,
+      "definition": "The capital-equipment vendors that enable all AI silicon regardless of who wins at the chip level \u2014 lithography, deposition, etch, metrology, epitaxy, and test (ASML, Applied Materials, Lam Research, KLA, Teradyne, Advantest, Aixtron). The mature picks-and-shovels basket; ETFs: SMH, SOXX.",
+      "notation": null,
+      "prefLabel": "Semicap Picks & Shovels"
+    },
+    "thermal-process": {
+      "altLabel": "Anneal / Furnace",
+      "broader": "wafer-fab-equipment",
+      "definition": "Furnace, rapid-thermal and laser-anneal systems that drive oxidation, diffusion, dopant activation and film densification. Adjacent to deposition \u2014 vertical furnaces often serve both \u2014 so vendors commonly carry both positions (Applied Materials, TEL, Kokusai; NAURA and ACM Research domestically).",
+      "notation": null,
+      "prefLabel": "Thermal Process"
+    },
+    "wafer-cleaning": {
+      "altLabel": "Cleaning",
+      "broader": "wafer-fab-equipment",
+      "definition": "Wet and dry surface preparation between process steps \u2014 particle, residue and contamination removal that determines yield at every layer. Named 'wafer-cleaning' rather than 'cleaning' to keep it unambiguous against back-end part cleaning (SCREEN, Lam Research, TEL; ACM Research and PNC Process domestically).",
+      "notation": null,
+      "prefLabel": "Wafer Cleaning"
+    },
+    "wafer-fab-equipment": {
+      "altLabel": null,
+      "broader": null,
+      "definition": "Functional domain \u2014 the front-end capital equipment that turns a blank wafer into patterned silicon, decomposed by process step: patterning (lithography, photoresist track), material removal (dry etch, CMP, cleaning), material addition (deposition, thermal process), doping (ion implant), and the metrology / inspection that gates each step. Distinct from stack.packaging-equipment (back-end / advanced-packaging tooling, D2), which acts on singulated die rather than wafers, and from the test handlers grouped under stack.packaging-test (D3). Added by ADR 027 \u00a7 SEG-004.",
+      "notation": "D6",
+      "prefLabel": "Wafer Fab Equipment"
+    }
+  },
+  "root": "AI Supply Chain"
+}
